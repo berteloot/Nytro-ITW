@@ -282,7 +282,7 @@ recommendations:
       - "30-min chat with hiring manager"
       - "Discuss specific projects and start date"
   
-  yes:
+  "yes":  # Quoted to prevent YAML boolean conversion
     min_weighted_score: 3.2
     label: "Yes"
     description: "Good potential. Worth a follow-up conversation."
@@ -300,7 +300,7 @@ recommendations:
       - "Discuss fit with hiring manager"
       - "Consider if role expectations align"
   
-  no:
+  "no":  # Quoted to prevent YAML boolean conversion
     min_weighted_score: 0
     label: "No"
     description: "Not the right fit for this role."

@@ -319,7 +319,10 @@ def process_response():
         # If interview is complete, generate evaluation
         if interview_session.phase == "complete":
             try:
+                print(f"[INFO] Starting evaluation for session {session_id}")
                 evaluation = ai_engine.evaluate_candidate(session_id)
+                print(f"[INFO] Evaluation complete: {evaluation.recommendation_label}")
+                
                 session_data = ai_engine.export_session(session_id)
                 
                 # Store evaluation
@@ -328,22 +331,29 @@ def process_response():
                     "session_data": session_data,
                     "timestamp": datetime.now().isoformat()
                 }
+                print(f"[INFO] Evaluation stored for session {session_id}")
                 
                 # Send to HubSpot
-                hubspot_result = send_evaluation_to_hubspot(
-                    evaluation, 
-                    session_data.get('conversation_history', [])
-                )
+                try:
+                    hubspot_result = send_evaluation_to_hubspot(
+                        evaluation, 
+                        session_data.get('conversation_history', [])
+                    )
+                    response_data["hubspot"] = hubspot_result
+                except Exception as hub_error:
+                    print(f"[ERROR] HubSpot failed: {hub_error}")
+                    response_data["hubspot"] = {"success": False, "error": str(hub_error)}
                 
                 response_data["evaluation_summary"] = {
                     "recommendation": evaluation.recommendation_label,
                     "score": evaluation.weighted_average,
-                    "summary": evaluation.overall_summary[:200] + "..."
+                    "summary": evaluation.overall_summary[:200] + "..." if evaluation.overall_summary else "Evaluation complete"
                 }
-                response_data["hubspot"] = hubspot_result
                 
             except Exception as e:
-                print(f"Evaluation error: {e}")
+                import traceback
+                print(f"[ERROR] Evaluation error: {e}")
+                print(f"[ERROR] Traceback: {traceback.format_exc()}")
                 response_data["evaluation_error"] = str(e)
         
         return jsonify(response_data)

@@ -680,20 +680,35 @@ REMEMBER:
     
     def _get_recommendation(self, weighted_average: float) -> Tuple[str, str, str]:
         """Get recommendation based on weighted average score"""
-        config = self.config['recommendations']
-        
-        if weighted_average >= config['strong_yes']['min_weighted_score']:
-            rec = config['strong_yes']
-            return 'strong_yes', rec['label'], rec['description']
-        elif weighted_average >= config['yes']['min_weighted_score']:
-            rec = config['yes']
-            return 'yes', rec['label'], rec['description']
-        elif weighted_average >= config['maybe']['min_weighted_score']:
-            rec = config['maybe']
-            return 'maybe', rec['label'], rec['description']
-        else:
-            rec = config['no']
-            return 'no', rec['label'], rec['description']
+        try:
+            recommendations = self.config.get('recommendations', {})
+            
+            # Debug logging
+            print(f"[DEBUG] Recommendations keys: {list(recommendations.keys())}")
+            print(f"[DEBUG] Weighted average: {weighted_average}")
+            
+            # Handle potential YAML boolean conversion (yes -> True)
+            # YAML can convert 'yes'/'no' to True/False
+            strong_yes = recommendations.get('strong_yes') or recommendations.get(True)
+            yes_rec = recommendations.get('yes') or recommendations.get(True)
+            maybe_rec = recommendations.get('maybe')
+            no_rec = recommendations.get('no') or recommendations.get(False)
+            
+            if strong_yes and weighted_average >= strong_yes.get('min_weighted_score', 4.0):
+                return 'strong_yes', strong_yes.get('label', 'Strong Yes'), strong_yes.get('description', '')
+            elif yes_rec and weighted_average >= yes_rec.get('min_weighted_score', 3.2):
+                return 'yes', yes_rec.get('label', 'Yes'), yes_rec.get('description', '')
+            elif maybe_rec and weighted_average >= maybe_rec.get('min_weighted_score', 2.3):
+                return 'maybe', maybe_rec.get('label', 'Maybe'), maybe_rec.get('description', '')
+            else:
+                if no_rec:
+                    return 'no', no_rec.get('label', 'No'), no_rec.get('description', '')
+                return 'no', 'No', 'Does not meet requirements'
+                
+        except Exception as e:
+            print(f"[ERROR] _get_recommendation failed: {e}")
+            print(f"[ERROR] Config recommendations: {self.config.get('recommendations')}")
+            return 'error', 'Review Needed', f'Recommendation error: {e}'
     
     def _default_evaluation(self) -> Dict:
         """Return default evaluation structure on error"""
