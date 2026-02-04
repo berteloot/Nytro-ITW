@@ -115,31 +115,37 @@ def create_contact(name: str, email: str, city: str = None) -> dict:
 
 
 def create_note(contact_id: str, note_body: str) -> dict:
-    """Create a note and associate it with a contact"""
+    """Create a note engagement and associate it with a contact.
+    
+    Uses the v1 Engagements API (same pattern as other Nytro apps).
+    """
     if not HUBSPOT_ACCESS_TOKEN:
         return None
-        
-    url = "https://api.hubapi.com/crm/v3/objects/notes"
+    
+    url = "https://api.hubapi.com/engagements/v1/engagements"
     payload = {
-        "properties": {
-            "hs_timestamp": str(int(datetime.now().timestamp() * 1000)),  # Unix ms
-            "hs_note_body": note_body
+        "engagement": {
+            "type": "NOTE",
+            "timestamp": int(datetime.now().timestamp() * 1000)  # Unix ms
         },
-        "associations": [{
-            "to": {"id": contact_id},
-            "types": [{
-                "associationCategory": "HUBSPOT_DEFINED",
-                "associationTypeId": 202
-            }]
-        }]
+        "associations": {
+            "contactIds": [int(contact_id)]
+        },
+        "metadata": {
+            "body": note_body
+        }
     }
     
     try:
         response = requests.post(url, json=payload, headers=get_hubspot_headers())
         response.raise_for_status()
-        return response.json()
+        result = response.json()
+        # Return in a format compatible with our existing code
+        return {"id": result.get("engagement", {}).get("id")}
     except requests.exceptions.RequestException as e:
-        print(f"Error creating note: {e}")
+        print(f"[HubSpot] Error creating note: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"[HubSpot] Response: {e.response.text}")
         return None
 
 
