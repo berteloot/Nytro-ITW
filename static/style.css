@@ -249,6 +249,46 @@ body {
     line-height: 1.5;
 }
 
+.human-option-card {
+    display: flex;
+    gap: 1rem;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    text-align: left;
+    max-width: 400px;
+    margin-bottom: 1.5rem;
+}
+
+.human-option-icon {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.human-option-content h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #15803d;
+}
+
+.human-option-content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.human-option-content a {
+    color: #16a34a;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.human-option-content a:hover {
+    color: #15803d;
+}
+
 .welcome-list {
     list-style: none;
     text-align: left;
