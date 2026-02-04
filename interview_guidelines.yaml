@@ -1,8 +1,8 @@
 # =============================================================================
 # NYTRO JUNIOR B2B MARKETER - AI INTERVIEW GUIDELINES
 # =============================================================================
-# Structured screening for: Autonomy, AI Fluency, Prompting Skill, B2B Thinking
-# Target duration: 20 minutes
+# Entry-level screening focused on potential, not perfection
+# Target duration: 10-12 minutes
 # =============================================================================
 
 role:
@@ -30,239 +30,182 @@ company:
 # INTERVIEW CONFIGURATION
 # =============================================================================
 interview:
-  estimated_duration: "15-20 minutes"
-  min_responses: 10
-  max_turns: 30
+  estimated_duration: "10-12 minutes"
+  min_responses: 6
+  max_turns: 18
   
-  # Interview principles (from the prompt)
+  # Junior-focused principles
   principles:
-    - "Be professional, concise, and friendly"
-    - "Ask one question at a time"
-    - "Use follow-up questions to test depth, not to trick"
-    - "Prefer behavioral and work-sample questions over trivia"
-    - "Require concrete examples using STAR format when possible"
-    - "Do not penalize lack of senior experience - assess junior potential"
-    - "If candidate is vague, ask for specifics: numbers, tools, steps, timeline"
-    - "After each answer, internally note what you learned, then move on"
+    - "Be warm, encouraging, and conversational"
+    - "Ask one simple question at a time"
+    - "Accept answers at face value - don't grill for details"
+    - "Focus on potential and enthusiasm, not depth of experience"
+    - "School projects, internships, and personal projects all count"
+    - "If they don't have experience in an area, ask what they'd like to learn"
+    - "Keep it light - this is a first conversation, not a final interview"
   
   red_flags:
-    - "Claims heavy autonomy but cannot describe process steps"
-    - "Uses AI but cannot explain verification or iteration"
-    - "Cannot produce a structured prompt or improve it after feedback"
-    - "Only talks about tactics with no ICP, message, or measurement"
-    - "Overconfident answers with no specifics"
+    - "Zero interest in marketing or the role"
+    - "Cannot describe any marketing activity (even basic)"
+    - "Dismissive of learning or feedback"
+    - "No curiosity about AI tools"
   
   personality:
     name: "Nytro Interview Assistant"
-    tone: "professional, concise, and friendly"
-    style: "structured but conversational, focused on depth over breadth"
+    tone: "friendly, encouraging, conversational"
+    style: "casual but professional, like a helpful colleague"
     guidelines:
-      - "Ask one question at a time, wait for full answer"
-      - "Use 1-2 follow-ups to probe depth when answers are vague"
-      - "Request specifics: numbers, tools, steps, timelines, what THEY personally did"
-      - "Use STAR format prompts: Situation, Task, Action, Result"
-      - "Be encouraging - this is junior screening, not senior grilling"
-      - "Keep pace moving - we have 20 minutes total"
-      - "Acknowledge good answers briefly before moving on"
+      - "One question at a time, keep it simple"
+      - "Acknowledge every answer positively before moving on"
+      - "If they seem nervous, be extra encouraging"
+      - "Don't push hard on follow-ups - one gentle probe max"
+      - "It's okay if they don't have perfect answers"
+      - "We're assessing fit and potential, not expertise"
 
 # =============================================================================
-# COMPETENCIES TO ASSESS (4 Core Areas)
+# COMPETENCIES TO ASSESS (Simplified for Junior Level)
 # =============================================================================
 
 skills:
-  autonomy_execution:
-    name: "Autonomy & Execution"
-    description: "Can work independently, manage time, clarify requirements, and deliver without constant supervision. Uses good judgment on what to do next and when to escalate."
-    weight: 5
-    key_indicators:
-      - "Describes clear process for breaking down work"
-      - "Knows when to ask questions vs make assumptions"
-      - "Documents decisions and communicates proactively"
-      - "Can prioritize competing tasks with reasoning"
-      - "Handles ambiguity without freezing"
-      - "Tracks own metrics and reports results"
-    red_flags:
-      - "Needs constant direction or approval"
-      - "Cannot describe how they organize their work"
-      - "Blames others when things go wrong"
-      - "No examples of independent execution"
-    questions:
-      warmup:
-        - question: "Give me a 60-second overview of you as a marketer. What projects have you worked on, and what do you want to get better at?"
-          purpose: "baseline, self-awareness"
-      core:
-        - question: "Tell me about a time you had to work mostly on your own with limited direction. What did you do to keep progress moving?"
-          followup: "What did you do when you got stuck?"
-          format: "STAR"
-        - question: "Walk me through how you plan and execute a piece of work end to end. For example: a landing page + email + LinkedIn post. How do you break it down?"
-          purpose: "process thinking"
-        - question: "How do you prioritize when you have 6 tasks due this week and not enough time?"
-          purpose: "judgment, prioritization"
-    scoring_anchors:
-      1: "Cannot describe any process, waits for instructions, no examples"
-      3: "Has basic structure, some process, needs guidance on prioritization"
-      5: "Clear process, good judgment, documents decisions, can execute with minimal oversight"
-
-  ai_fluency:
-    name: "AI Fluency & Responsible Use"
-    description: "Uses AI tools productively and responsibly. Has prepared for this interview with AI (without sounding scripted). Understands limitations, verification, and confidentiality."
-    weight: 5
-    key_indicators:
-      - "Uses multiple AI tools for different purposes"
-      - "Has a clear workflow from prompt to final output"
-      - "Verifies AI outputs before using"
-      - "Knows AI limitations and failure modes"
-      - "Understands confidentiality with company data"
-      - "Honest about AI use in interview prep"
-    red_flags:
-      - "Blind trust in AI outputs"
-      - "No verification process"
-      - "Would paste confidential data into public AI"
-      - "Scripted answers that sound AI-generated"
-      - "Cannot give example of AI giving wrong answer"
-    questions:
-      core:
-        - question: "Which AI tools do you use for marketing work - ChatGPT, Claude, Gemini, Perplexity, others? What do you use each one for?"
-          purpose: "tool awareness"
-        - question: "Walk me through your workflow when using AI for a marketing task. What are the steps from prompt to final output?"
-          followup: "How do you verify accuracy and avoid errors?"
-          purpose: "process, verification"
-        - question: "What did you do with AI to prepare for this interview? Please be honest and specific."
-          followup: "What did AI help you do well, and what did it not help with?"
-          purpose: "honesty, self-awareness"
-        - question: "Give an example of a time AI gave you a bad answer. How did you catch it, and what did you change?"
-          purpose: "critical thinking"
-        - question: "What rules do you follow around confidentiality when using AI tools with company data?"
-          purpose: "security awareness"
-    scoring_anchors:
-      1: "No AI experience, or uses AI without any verification or judgment"
-      3: "Uses AI tools, has some verification process, aware of basic limitations"
-      5: "Strong workflow, multiple tools, robust verification, clear confidentiality rules"
-
-  prompting_skill:
-    name: "Prompting Skill"
-    description: "Can write a clear prompt, iterate, and improve outputs. Knows how to structure prompts for specific deliverables and constraints."
+  marketing_fundamentals:
+    name: "Marketing Interest & Basics"
+    description: "Has genuine interest in marketing and understands basic concepts. School projects, internships, or self-learning all count."
     weight: 4
     key_indicators:
-      - "Includes constraints in prompts (tone, audience, length, format)"
-      - "Asks clarifying questions before prompting"
-      - "Can iterate and improve a prompt based on feedback"
-      - "Knows how to request structured output"
-      - "Understands prompt debugging"
+      - "Can explain why they're interested in marketing"
+      - "Understands basic concepts (audience, messaging, channels)"
+      - "Has done some marketing activity (any level)"
+      - "Shows curiosity about the field"
     red_flags:
-      - "Writes vague one-line prompts"
-      - "Cannot improve prompt after feedback"
-      - "Doesn't include context or constraints"
-      - "Cannot identify why a prompt would fail"
+      - "No interest in marketing"
+      - "Cannot name any marketing activity they've done"
     questions:
-      exercise:
-        - question: "Let's do a quick exercise. Write a prompt you would use to create a 4-email outbound sequence for a B2B product. Include your constraints: tone, audience, goal, length, CTA."
-          followup: "Good start. Now improve it - what's missing that would make the output more useful?"
-          purpose: "live prompting test"
-        - question: "I'll give you a vague request: 'Write a LinkedIn post about our product.' What 5-8 clarifying questions would you ask before prompting an AI model?"
-          purpose: "requirements gathering"
-        - question: "Here's a weak prompt: 'Write a whitepaper for CEOs about AI in supply chain.' How would you rewrite it so the output is focused and credible? Add at least 4-5 constraints."
-          purpose: "prompt debugging"
+      warmup:
+        - question: "What got you interested in marketing? Was there a moment or project that sparked it?"
+          purpose: "motivation, genuine interest"
+      core:
+        - question: "Tell me about any marketing project you've worked on - it could be from school, an internship, a side project, or even promoting something for fun."
+          purpose: "any experience, enthusiasm"
     scoring_anchors:
-      1: "Vague prompts, cannot iterate, no constraints"
-      3: "Basic prompts with some constraints, can improve with guidance"
-      5: "Well-structured prompts, clear constraints, iterates effectively, requests structured output"
+      1: "No interest, cannot describe any marketing activity"
+      3: "Some interest, basic project experience, learning"
+      5: "Genuine enthusiasm, has done real projects, understands basics"
 
-  b2b_campaign_thinking:
-    name: "B2B Campaign Thinking"
-    description: "Can reason from ICP and positioning down to channels, content, conversion, measurement, and follow-up. Understands pipeline, lead quality, and sales alignment."
+  learning_potential:
+    name: "Learning & Growth Mindset"
+    description: "Eager to learn, takes initiative, and can work independently. Shows curiosity and self-direction."
     weight: 5
     key_indicators:
-      - "Can define ICP: buyer, user, influencer"
-      - "Connects campaign to measurable goals"
-      - "Proposes realistic multi-channel approach"
-      - "Understands lead qualification basics"
-      - "Knows what content to produce first and why"
-      - "Can diagnose weak results and propose tests"
+      - "Actively learning new skills"
+      - "Can work on tasks without constant supervision"
+      - "Asks questions when stuck"
+      - "Shows initiative"
     red_flags:
-      - "Only tactics, no strategy or measurement"
-      - "Cannot define ICP or target audience"
-      - "No connection between activity and pipeline"
-      - "Unrealistic plans for small team"
+      - "Expects constant direction"
+      - "No interest in learning new things"
     questions:
-      scenario_intro: |
-        Let me give you a scenario: We sell B2B software to mid-market operations teams. 
-        Deal size is $25k-$80k ARR, sales cycle is 2-4 months. 
-        Goal: generate qualified meetings for sales.
       core:
-        - question: "For this scenario, define a basic ICP. Who is the buyer, who is the user, and who influences the decision?"
-          purpose: "ICP thinking"
-        - question: "What would be your campaign goal, and what would you measure weekly vs monthly?"
-          purpose: "goal setting, metrics"
-        - question: "Propose a simple multi-channel plan - LinkedIn, email, website, webinar, partners, paid, or other. Keep it realistic for a small team."
-          purpose: "channel strategy"
-        - question: "What 3-4 content assets would you produce first and why?"
-          purpose: "content prioritization"
-        - question: "How would you qualify leads before handing them to sales? What signals matter?"
-          purpose: "lead qualification"
-        - question: "If results are weak after 2 weeks, what are your first three diagnostic checks?"
-          purpose: "problem solving"
+        - question: "How do you usually go about learning something new? Give me a recent example."
+          purpose: "self-direction, learning style"
+        - question: "Tell me about a time you had to figure something out on your own without much guidance."
+          purpose: "independence, problem-solving"
     scoring_anchors:
-      1: "Cannot define ICP, only random tactics, no measurement"
-      3: "Basic ICP, some channel logic, understands need for metrics"
-      5: "Clear ICP, connected strategy, realistic plan, knows how to diagnose and iterate"
+      1: "Passive, waits for instructions, no learning examples"
+      3: "Some self-direction, willing to learn with support"
+      5: "Proactive learner, figures things out, takes initiative"
+
+  ai_awareness:
+    name: "AI Tool Awareness"
+    description: "Familiar with AI tools and open to using them. Doesn't need to be an expert - just curious and willing to learn."
+    weight: 4
+    key_indicators:
+      - "Has tried ChatGPT, Claude, or similar tools"
+      - "Open to using AI for work tasks"
+      - "Understands AI isn't perfect and needs checking"
+    red_flags:
+      - "Refuses to use AI tools"
+      - "Blindly trusts AI without any verification"
+    questions:
+      core:
+        - question: "Have you used any AI tools like ChatGPT or Claude? What have you tried using them for?"
+          purpose: "awareness, curiosity"
+        - question: "What do you think AI is good at, and where do you think it needs a human to double-check?"
+          purpose: "basic critical thinking"
+    scoring_anchors:
+      1: "No awareness or refuses to engage with AI"
+      3: "Has tried AI tools, basic understanding"
+      5: "Uses AI regularly, understands strengths and limitations"
+
+  communication:
+    name: "Communication & Fit"
+    description: "Communicates clearly and seems like a good cultural fit. Friendly, professional, and genuine."
+    weight: 3
+    key_indicators:
+      - "Expresses ideas clearly"
+      - "Friendly and professional"
+      - "Asks thoughtful questions"
+      - "Genuine and authentic"
+    red_flags:
+      - "Rude or dismissive"
+      - "Cannot articulate basic thoughts"
+    questions:
+      core:
+        - question: "What are you hoping to learn or achieve in your first marketing role?"
+          purpose: "goals, self-awareness"
+    scoring_anchors:
+      1: "Poor communication, unprofessional, or concerning behavior"
+      3: "Adequate communication, seems okay"
+      5: "Clear, friendly, genuine, great fit"
 
 # =============================================================================
-# INTERVIEW FLOW (Condensed for 20 minutes)
+# INTERVIEW FLOW (10-12 minutes)
 # =============================================================================
 
 conversation_flow:
   introduction:
     message: |
-      Hi! I'm the Nytro Interview Assistant. I'll be conducting your initial screening for the Junior B2B Marketer position.
+      Hi! I'm the Nytro Interview Assistant. Thanks for taking the time to chat with me today!
       
-      This is a structured conversation - I'll ask about your experience, how you work with AI tools, and walk through a quick campaign scenario. It should take about 15-20 minutes.
+      This is just a casual conversation to get to know you better - about 10 minutes. I'll ask about your interest in marketing, how you like to learn, and your thoughts on AI tools.
       
-      I'll ask follow-up questions to understand your thinking better. There are no trick questions - I'm looking for how you think, not perfect answers.
+      There are no trick questions, and there's no pressure to have perfect answers. I'm just curious to learn about you!
       
-      Ready to start?
+      Sound good?
     wait_for_confirmation: true
   
   collect_info:
     order: ["name", "email"]
-    transition: "Great! Let's jump in."
+    transition: "Great! Let's get started."
   
-  # Interview phases (in order)
+  # Interview phases (simplified)
   phases:
-    - id: "warmup"
-      name: "Quick Introduction"
+    - id: "intro"
+      name: "Getting to Know You"
       duration_target: "2-3 min"
-      skills: ["autonomy_execution"]
+      skills: ["marketing_fundamentals"]
+      question_count: 2
+      intro: "First, I'd love to hear about your interest in marketing."
+    
+    - id: "learning"
+      name: "How You Learn"
+      duration_target: "2-3 min"
+      skills: ["learning_potential"]
+      question_count: 2
+      intro: "Now let's talk about how you approach learning new things."
+    
+    - id: "ai"
+      name: "AI Tools"
+      duration_target: "2-3 min"
+      skills: ["ai_awareness"]
+      question_count: 2
+      intro: "Let's chat about AI tools - no wrong answers here!"
+    
+    - id: "goals"
+      name: "Your Goals"
+      duration_target: "1-2 min"
+      skills: ["communication"]
       question_count: 1
-      intro: "First, tell me a bit about yourself."
-    
-    - id: "autonomy"
-      name: "How You Work"
-      duration_target: "4-5 min"
-      skills: ["autonomy_execution"]
-      question_count: 2
-      intro: "Now I'd like to understand how you approach your work."
-    
-    - id: "ai_fluency"
-      name: "AI Tools & Workflow"
-      duration_target: "4-5 min"
-      skills: ["ai_fluency"]
-      question_count: 3
-      intro: "Let's talk about how you use AI tools."
-    
-    - id: "prompting"
-      name: "Quick Prompting Exercise"
-      duration_target: "3-4 min"
-      skills: ["prompting_skill"]
-      question_count: 2
-      intro: "Let's do a quick exercise to see how you work with AI prompts."
-    
-    - id: "campaign"
-      name: "B2B Campaign Scenario"
-      duration_target: "4-5 min"
-      skills: ["b2b_campaign_thinking"]
-      question_count: 3
-      intro: "Finally, let's walk through a campaign scenario."
+      intro: "Almost done! One last question."
     
     - id: "closing"
       name: "Wrap Up"
@@ -270,154 +213,95 @@ conversation_flow:
   
   closing:
     ask_candidate_questions: true
-    candidate_questions_prompt: "Before we wrap up - what questions do you have about the role, team, or how we work?"
+    candidate_questions_prompt: "Before we wrap up - do you have any questions for me about the role or Nytro?"
     final_message: |
-      Thank you for the conversation, {name}! 
+      Thanks so much for chatting with me, {name}! 
       
-      I've captured your responses and our team will review them. You'll hear back within 5-7 business days about next steps.
+      It was great learning about you. Our team will review our conversation and you'll hear back within a week about next steps.
       
-      We appreciate your time and interest in joining Nytro!
+      Best of luck, and thanks for your interest in Nytro!
 
 # =============================================================================
-# SCORING RUBRIC
+# SCORING RUBRIC (Junior-Appropriate)
 # =============================================================================
 
 scoring_rubric:
   5:
-    label: "Strong for Level"
-    description: "Clear process, good judgment, can execute with minimal oversight"
+    label: "Strong Potential"
+    description: "Shows genuine enthusiasm, relevant experience, and great fit"
     criteria:
-      - "Provides specific examples with concrete details"
-      - "Shows structured thinking and clear process"
-      - "Demonstrates good judgment and self-awareness"
-      - "Can iterate and improve based on feedback"
+      - "Clearly passionate about marketing"
+      - "Has done real projects (any scale)"
+      - "Strong learning orientation"
+      - "Great communication"
   4:
-    label: "Above Average"
-    description: "Solid fundamentals, occasional guidance needed"
+    label: "Good Potential"
+    description: "Solid interest and some relevant background"
     criteria:
-      - "Good examples with reasonable detail"
-      - "Has a process, may have some gaps"
-      - "Shows learning orientation"
+      - "Interested in marketing"
+      - "Some project experience"
+      - "Willing to learn"
   3:
-    label: "Adequate Junior Level"
-    description: "Has basics, some structure, needs guidance"
+    label: "Some Potential"
+    description: "Basic interest, limited experience but trainable"
     criteria:
-      - "Can provide examples but may lack specifics"
-      - "Basic understanding of concepts"
-      - "Needs prompting to go deeper"
+      - "Some interest in marketing"
+      - "Limited but some relevant exposure"
+      - "Open to learning"
   2:
-    label: "Below Expectations"
-    description: "Significant gaps, would need heavy support"
+    label: "Limited Fit"
+    description: "Unclear interest or concerning gaps"
     criteria:
-      - "Vague answers, few concrete examples"
-      - "Limited process or structure"
-      - "May have concerning gaps"
+      - "Uncertain about marketing as a career"
+      - "Very limited exposure"
+      - "May need significant development"
   1:
-    label: "Not Demonstrated"
-    description: "Vague, unsafe practices, or fundamental gaps"
+    label: "Not a Fit"
+    description: "No clear interest or significant concerns"
     criteria:
-      - "Cannot provide relevant examples"
-      - "No clear process or understanding"
+      - "No genuine interest in marketing"
       - "Red flags present"
+      - "Poor communication or fit"
 
 # =============================================================================
-# RECOMMENDATION THRESHOLDS
+# RECOMMENDATION THRESHOLDS (More Generous for Juniors)
 # =============================================================================
 
 recommendations:
   strong_yes:
     min_weighted_score: 4.0
     label: "Strong Yes"
-    description: "Recommend proceeding to final interview immediately. Strong junior potential."
-    action: "Schedule final interview within 48 hours"
+    description: "Great junior candidate! Enthusiastic, capable, and good fit."
+    action: "Move to hiring manager interview"
     next_steps:
-      - "Skills verification: Brief work sample (30-min campaign brief)"
-      - "Culture fit conversation with hiring manager"
-      - "Reference check on autonomy and collaboration"
+      - "30-min chat with hiring manager"
+      - "Discuss specific projects and role expectations"
   
   yes:
-    min_weighted_score: 3.3
+    min_weighted_score: 3.2
     label: "Yes"
-    description: "Good potential, recommend follow-up to verify specific areas."
-    action: "Schedule follow-up interview focusing on flagged areas"
+    description: "Good potential. Worth a follow-up conversation."
+    action: "Schedule follow-up interview"
     next_steps:
-      - "Deeper dive on weaker competency areas"
-      - "Work sample to verify execution ability"
-      - "Reference check"
+      - "Brief follow-up to explore specific areas"
+      - "Discuss any questions from screening"
   
   maybe:
-    min_weighted_score: 2.5
+    min_weighted_score: 2.3
     label: "Maybe"
-    description: "Some potential but significant questions remain. Discuss with hiring manager."
-    action: "Review with team before deciding next steps"
+    description: "Some potential but questions remain. Discuss with team."
+    action: "Review with hiring manager"
     next_steps:
-      - "Discuss concerns with hiring manager"
-      - "May need additional screening or different role fit"
+      - "Discuss fit with hiring manager"
+      - "Consider for different role if available"
   
   no:
     min_weighted_score: 0
     label: "No"
-    description: "Does not meet requirements for this role at this time."
+    description: "Not the right fit for this role."
     action: "Send polite decline"
     next_steps:
-      - "Provide brief, constructive feedback if appropriate"
-
-# =============================================================================
-# EVALUATION OUTPUT FORMAT
-# =============================================================================
-
-evaluation_output:
-  required_fields:
-    - "Score 1-5 for each competency with specific evidence"
-    - "3 strengths observed"
-    - "3 risks or concerns"
-    - "3 recommended next-step checks (work sample, reference, or interview focus)"
-    - "Final recommendation: Strong Yes / Yes / Maybe / No"
-  
-  evidence_requirements:
-    - "Quote or paraphrase specific candidate statements"
-    - "Note what was demonstrated vs claimed"
-    - "Flag any red flags observed"
-    - "Note areas that need verification"
-
-# =============================================================================
-# FOLLOW-UP INTERVIEW GUIDELINES
-# =============================================================================
-
-follow_up_interview:
-  purpose: "Verify flagged areas from AI screening and assess culture fit"
-  format: "30-45 minute video call with hiring manager"
-  
-  focus_areas:
-    low_scores:
-      description: "Competencies that scored below 3 need deeper exploration"
-      approach: "Give candidate opportunity to provide additional examples"
-    
-    verification:
-      description: "Verify impressive claims with more detail"
-      approach: "Ask for specifics: tools used, timeline, what they personally did vs team"
-    
-    work_sample:
-      description: "Test actual skills where possible"
-      options:
-        - "15-min live prompt writing exercise"
-        - "Review of campaign brief they prepare in advance"
-        - "Walk through their actual work portfolio"
-    
-    culture_fit:
-      description: "Assess working style and team fit"
-      questions:
-        - "What kind of feedback helps you improve?"
-        - "How do you handle disagreement with a manager?"
-        - "What does a great first 60 days look like to you?"
-
-  interviewer_guidelines:
-    - "Review AI screening summary and scores before the call"
-    - "Focus 60% of time on flagged areas"
-    - "Use STAR format for behavioral questions"
-    - "Ask for specifics: numbers, tools, steps, timeline"
-    - "Note discrepancies between AI interview and follow-up"
-    - "Score using the same 1-5 rubric for consistency"
+      - "Thank them for their time"
 
 # =============================================================================
 # REQUIRED INFORMATION
@@ -425,7 +309,7 @@ follow_up_interview:
 
 required_info:
   - field: "name"
-    question: "What's your name?"
+    question: "First, what's your name?"
     required: true
   
   - field: "email"
@@ -440,36 +324,42 @@ required_info:
 ai_config:
   model: "gpt-4o"
   temperature: 0.7
-  max_tokens: 600
+  max_tokens: 400
   
   system_context: |
-    You are conducting a structured interview for a junior B2B marketer position.
+    You are conducting a friendly, casual screening interview for a JUNIOR B2B marketer position.
     
-    EVALUATION FOCUS:
-    1. Autonomy & Execution - Can they work independently and deliver?
-    2. AI Fluency - Do they use AI tools productively and responsibly?
-    3. Prompting Skill - Can they write clear prompts and iterate?
-    4. B2B Campaign Thinking - Can they connect strategy to execution?
+    CRITICAL: This is an ENTRY-LEVEL role. Adjust your expectations accordingly:
+    - School projects, internships, and personal projects ALL count as valid experience
+    - They may not have professional marketing experience yet - that's okay
+    - Focus on POTENTIAL and ENTHUSIASM, not depth of expertise
+    - Be encouraging and warm, not intimidating
+    
+    ASSESSMENT AREAS (keep it simple):
+    1. Marketing Interest - Do they actually want to do marketing?
+    2. Learning Potential - Can they figure things out and grow?
+    3. AI Awareness - Are they open to using AI tools?
+    4. Communication - Can they express themselves clearly?
     
     INTERVIEW STYLE:
-    - Professional, concise, friendly
-    - One question at a time
-    - Follow up on vague answers with "Can you be more specific about..."
-    - Ask for STAR format: Situation, Task, Action, Result
-    - Don't penalize lack of senior experience - assess junior potential
-    - Keep the pace moving - we have 20 minutes total
+    - Friendly and conversational, like chatting with a potential colleague
+    - One simple question at a time
+    - Acknowledge every answer positively ("That's great!", "Interesting!", "Nice!")
+    - Don't push hard for details - one gentle follow-up max
+    - If they don't have experience, ask what they'd like to learn
+    - Keep it moving - we only have 10 minutes
     
-    WHEN ANSWERS ARE VAGUE, ASK FOR:
-    - Specific numbers or metrics
-    - Tools they actually used
-    - Steps they personally took (not the team)
-    - Timeline and sequence
-    - What happened as a result
+    WHAT TO AVOID:
+    - Complex scenarios or case studies
+    - Grilling for specific metrics or results
+    - Making them feel inadequate for lack of experience
+    - Technical jargon or advanced concepts
+    - Multiple rapid-fire follow-ups
   
   additional_instructions:
-    - "Never reveal scoring during the interview"
-    - "If asked about salary, say the team will discuss that in later stages"
-    - "Stay focused on the four competencies"
-    - "Be encouraging but probe for depth"
-    - "Note internally when you see red flags"
-    - "For prompting exercises, give brief feedback before asking them to iterate"
+    - "Be warm and encouraging throughout"
+    - "Accept answers at face value - don't interrogate"
+    - "If they seem nervous, be extra friendly"
+    - "School projects and internships are valid experience"
+    - "Focus on what they WANT to learn, not just what they know"
+    - "Keep responses short and conversational"
