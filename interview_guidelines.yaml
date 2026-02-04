@@ -1,30 +1,29 @@
 # =============================================================================
-# NYTRO JUNIOR B2B MARKETER - AI INTERVIEW GUIDELINES
+# NYTRO JUNIOR MARKETER - AI INTERVIEW GUIDELINES
 # =============================================================================
 # Entry-level screening focused on potential, not perfection
 # Target duration: 10-12 minutes
 # =============================================================================
 
 role:
-  title: "Junior B2B Marketer"
+  title: "Junior Marketer"
   department: "Marketing"
-  location: "Philadelphia, PA"
+  location: "Philadelphia area (preferred)"
   type: "Full-time"
   context: |
-    We sell B2B software to mid-market operations teams.
-    Average deal size: $25k-$80k ARR
-    Sales cycle: 2-4 months
-    Goal: Generate qualified meetings for sales team
+    Supporting US-based projects and events.
+    Working across digital campaigns, content creation, and day-to-day marketing execution.
+    Hands-on role with variety - from social posts to event support to campaign coordination.
 
 company:
   name: "Nytro"
-  description: "A B2B marketing technology company helping operations teams streamline workflows through intelligent automation."
+  description: "A growing B2B marketing company working on exciting US projects. We value people who can roll up their sleeves and get things done."
   culture_keywords:
-    - autonomous
-    - AI-forward
-    - data-driven
-    - fast-moving
+    - hands-on
+    - growing
     - collaborative
+    - US-focused
+    - practical
 
 # =============================================================================
 # INTERVIEW CONFIGURATION
@@ -40,15 +39,15 @@ interview:
     - "Ask one simple question at a time"
     - "Accept answers at face value - don't grill for details"
     - "Focus on potential and enthusiasm, not depth of experience"
-    - "School projects, internships, and personal projects all count"
+    - "School projects, internships, volunteer work, and personal projects all count"
     - "If they don't have experience in an area, ask what they'd like to learn"
     - "Keep it light - this is a first conversation, not a final interview"
   
   red_flags:
-    - "Zero interest in marketing or the role"
-    - "Cannot describe any marketing activity (even basic)"
+    - "Zero interest in marketing or hands-on work"
+    - "Cannot describe any marketing or creative activity"
     - "Dismissive of learning or feedback"
-    - "No curiosity about AI tools"
+    - "Not interested in the Philadelphia area or US projects"
   
   personality:
     name: "Nytro Interview Assistant"
@@ -63,99 +62,103 @@ interview:
       - "We're assessing fit and potential, not expertise"
 
 # =============================================================================
-# COMPETENCIES TO ASSESS (Simplified for Junior Level)
+# COMPETENCIES TO ASSESS (Practical & Execution-Focused)
 # =============================================================================
 
 skills:
-  marketing_fundamentals:
-    name: "Marketing Interest & Basics"
-    description: "Has genuine interest in marketing and understands basic concepts. School projects, internships, or self-learning all count."
-    weight: 4
+  marketing_interest:
+    name: "Marketing Interest & Hands-On Experience"
+    description: "Genuinely interested in marketing and has done some hands-on work. School projects, internships, volunteer work, or personal projects all count."
+    weight: 5
     key_indicators:
       - "Can explain why they're interested in marketing"
-      - "Understands basic concepts (audience, messaging, channels)"
-      - "Has done some marketing activity (any level)"
-      - "Shows curiosity about the field"
+      - "Has created content, run a social account, or helped with campaigns"
+      - "Willing to do varied tasks - from writing to coordination"
+      - "Shows enthusiasm for the work"
     red_flags:
       - "No interest in marketing"
-      - "Cannot name any marketing activity they've done"
+      - "Only interested in strategy, not execution"
+      - "Cannot name any hands-on marketing activity"
     questions:
       warmup:
         - question: "What got you interested in marketing? Was there a moment or project that sparked it?"
           purpose: "motivation, genuine interest"
       core:
-        - question: "Tell me about any marketing project you've worked on - it could be from school, an internship, a side project, or even promoting something for fun."
-          purpose: "any experience, enthusiasm"
+        - question: "Tell me about something you've created or promoted - it could be a social media post, a flyer, content for a club, or even just helping a friend with their business. Anything counts!"
+          purpose: "hands-on experience, creativity"
     scoring_anchors:
-      1: "No interest, cannot describe any marketing activity"
-      3: "Some interest, basic project experience, learning"
-      5: "Genuine enthusiasm, has done real projects, understands basics"
+      1: "No interest, cannot describe any hands-on marketing activity"
+      3: "Some interest, has done basic tasks, willing to learn more"
+      5: "Genuine enthusiasm, has created real content or campaigns, eager to do more"
 
-  learning_potential:
-    name: "Learning & Growth Mindset"
-    description: "Eager to learn, takes initiative, and can work independently. Shows curiosity and self-direction."
+  execution_mindset:
+    name: "Getting Things Done"
+    description: "Can take tasks and complete them. Organized, reliable, and comfortable juggling multiple small tasks."
     weight: 5
     key_indicators:
-      - "Actively learning new skills"
-      - "Can work on tasks without constant supervision"
-      - "Asks questions when stuck"
-      - "Shows initiative"
+      - "Can describe completing a project or task"
+      - "Organized and can manage their time"
+      - "Comfortable with variety and changing priorities"
+      - "Follows through on commitments"
     red_flags:
-      - "Expects constant direction"
-      - "No interest in learning new things"
+      - "Only wants to do one type of task"
+      - "Seems disorganized or unreliable"
+      - "Cannot give examples of completing work"
     questions:
       core:
-        - question: "How do you usually go about learning something new? Give me a recent example."
-          purpose: "self-direction, learning style"
-        - question: "Tell me about a time you had to figure something out on your own without much guidance."
-          purpose: "independence, problem-solving"
+        - question: "This role involves juggling different tasks - some days you might write social posts, other days help with an event, or coordinate a campaign. How do you usually stay organized when you have multiple things going on?"
+          purpose: "organization, multitasking"
+        - question: "Tell me about a time you had to get something done on a deadline. How did you handle it?"
+          purpose: "reliability, execution"
     scoring_anchors:
-      1: "Passive, waits for instructions, no learning examples"
-      3: "Some self-direction, willing to learn with support"
-      5: "Proactive learner, figures things out, takes initiative"
+      1: "Disorganized, cannot describe completing tasks, seems unreliable"
+      3: "Has some organization, can complete tasks with support"
+      5: "Well-organized, reliable, comfortable with variety, gets things done"
 
-  ai_awareness:
-    name: "AI Tool Awareness"
-    description: "Familiar with AI tools and open to using them. Doesn't need to be an expert - just curious and willing to learn."
+  digital_comfort:
+    name: "Digital & AI Comfort"
+    description: "Comfortable with digital tools, social media, and open to using AI. Doesn't need to be an expert - just willing to learn and try things."
     weight: 4
     key_indicators:
-      - "Has tried ChatGPT, Claude, or similar tools"
-      - "Open to using AI for work tasks"
-      - "Understands AI isn't perfect and needs checking"
+      - "Uses social media and understands how it works"
+      - "Comfortable learning new digital tools"
+      - "Has tried AI tools or is curious about them"
+      - "Not intimidated by technology"
     red_flags:
-      - "Refuses to use AI tools"
-      - "Blindly trusts AI without any verification"
+      - "Uncomfortable with digital tools"
+      - "Refuses to use social media or AI"
     questions:
       core:
-        - question: "Have you used any AI tools like ChatGPT or Claude? What have you tried using them for?"
-          purpose: "awareness, curiosity"
-        - question: "What do you think AI is good at, and where do you think it needs a human to double-check?"
-          purpose: "basic critical thinking"
+        - question: "What social media platforms do you use most? Have you ever managed a page or account for something other than yourself?"
+          purpose: "social media familiarity"
+        - question: "Have you tried any AI tools like ChatGPT? If yes, what for? If not, what would you want to try using it for?"
+          purpose: "AI openness, curiosity"
     scoring_anchors:
-      1: "No awareness or refuses to engage with AI"
-      3: "Has tried AI tools, basic understanding"
-      5: "Uses AI regularly, understands strengths and limitations"
+      1: "Uncomfortable with digital tools, no social media presence, refuses AI"
+      3: "Uses social media, willing to try new tools and AI"
+      5: "Strong digital native, has managed accounts, actively uses AI"
 
-  communication:
-    name: "Communication & Fit"
-    description: "Communicates clearly and seems like a good cultural fit. Friendly, professional, and genuine."
-    weight: 3
+  fit_and_goals:
+    name: "Role Fit & Goals"
+    description: "Good fit for the role and location. Clear about what they want to learn and why this opportunity interests them."
+    weight: 4
     key_indicators:
-      - "Expresses ideas clearly"
-      - "Friendly and professional"
-      - "Asks thoughtful questions"
-      - "Genuine and authentic"
+      - "Interested in the Philadelphia area / US projects"
+      - "Wants a hands-on marketing role"
+      - "Has realistic expectations for a junior position"
+      - "Enthusiastic about the opportunity"
     red_flags:
-      - "Rude or dismissive"
-      - "Cannot articulate basic thoughts"
+      - "Not interested in the location"
+      - "Only wants remote work with no flexibility"
+      - "Expects senior-level responsibilities immediately"
     questions:
       core:
-        - question: "What are you hoping to learn or achieve in your first marketing role?"
-          purpose: "goals, self-awareness"
+        - question: "This role is based in the Philadelphia area and supports US projects. Does that work for you? What excites you about this opportunity?"
+          purpose: "location fit, motivation"
     scoring_anchors:
-      1: "Poor communication, unprofessional, or concerning behavior"
-      3: "Adequate communication, seems okay"
-      5: "Clear, friendly, genuine, great fit"
+      1: "Location doesn't work, not interested in the role, poor fit"
+      3: "Location works, some interest, acceptable fit"
+      5: "Excited about location and role, great fit, clear enthusiasm"
 
 # =============================================================================
 # INTERVIEW FLOW (10-12 minutes)
@@ -166,44 +169,44 @@ conversation_flow:
     message: |
       Hi! I'm the Nytro Interview Assistant. Thanks for taking the time to chat with me today!
       
-      This is just a casual conversation to get to know you better - about 10 minutes. I'll ask about your interest in marketing, how you like to learn, and your thoughts on AI tools.
+      We're looking for a Junior Marketer to join our team and support exciting US-based projects. This is a hands-on role working across digital campaigns, content, and day-to-day marketing.
       
-      There are no trick questions, and there's no pressure to have perfect answers. I'm just curious to learn about you!
+      This is just a casual 10-minute conversation to get to know you better. No trick questions - I'm just curious to learn about you and what you're looking for!
       
-      Sound good?
+      Ready to get started?
     wait_for_confirmation: true
   
   collect_info:
     order: ["name", "email"]
-    transition: "Great! Let's get started."
+    transition: "Great! Let's dive in."
   
   # Interview phases (simplified)
   phases:
-    - id: "intro"
-      name: "Getting to Know You"
+    - id: "interest"
+      name: "Your Interest in Marketing"
       duration_target: "2-3 min"
-      skills: ["marketing_fundamentals"]
+      skills: ["marketing_interest"]
       question_count: 2
       intro: "First, I'd love to hear about your interest in marketing."
     
-    - id: "learning"
-      name: "How You Learn"
+    - id: "execution"
+      name: "Getting Things Done"
       duration_target: "2-3 min"
-      skills: ["learning_potential"]
+      skills: ["execution_mindset"]
       question_count: 2
-      intro: "Now let's talk about how you approach learning new things."
+      intro: "Now let's talk about how you work."
     
-    - id: "ai"
-      name: "AI Tools"
+    - id: "digital"
+      name: "Digital & AI"
       duration_target: "2-3 min"
-      skills: ["ai_awareness"]
+      skills: ["digital_comfort"]
       question_count: 2
-      intro: "Let's chat about AI tools - no wrong answers here!"
+      intro: "Let's chat about digital tools - no wrong answers here!"
     
-    - id: "goals"
-      name: "Your Goals"
+    - id: "fit"
+      name: "Role Fit"
       duration_target: "1-2 min"
-      skills: ["communication"]
+      skills: ["fit_and_goals"]
       question_count: 1
       intro: "Almost done! One last question."
     
@@ -213,13 +216,13 @@ conversation_flow:
   
   closing:
     ask_candidate_questions: true
-    candidate_questions_prompt: "Before we wrap up - do you have any questions for me about the role or Nytro?"
+    candidate_questions_prompt: "Before we wrap up - do you have any questions about the role or working at Nytro?"
     final_message: |
       Thanks so much for chatting with me, {name}! 
       
       It was great learning about you. Our team will review our conversation and you'll hear back within a week about next steps.
       
-      Best of luck, and thanks for your interest in Nytro!
+      Best of luck, and thanks for your interest in joining Nytro!
 
 # =============================================================================
 # SCORING RUBRIC (Junior-Appropriate)
@@ -228,19 +231,21 @@ conversation_flow:
 scoring_rubric:
   5:
     label: "Strong Potential"
-    description: "Shows genuine enthusiasm, relevant experience, and great fit"
+    description: "Enthusiastic, has relevant experience, great fit for the role"
     criteria:
       - "Clearly passionate about marketing"
-      - "Has done real projects (any scale)"
-      - "Strong learning orientation"
-      - "Great communication"
+      - "Has done hands-on work (any scale)"
+      - "Organized and reliable"
+      - "Good digital skills and AI curiosity"
+      - "Excited about the opportunity"
   4:
     label: "Good Potential"
     description: "Solid interest and some relevant background"
     criteria:
       - "Interested in marketing"
-      - "Some project experience"
+      - "Some hands-on experience"
       - "Willing to learn"
+      - "Location works"
   3:
     label: "Some Potential"
     description: "Basic interest, limited experience but trainable"
@@ -254,28 +259,28 @@ scoring_rubric:
     criteria:
       - "Uncertain about marketing as a career"
       - "Very limited exposure"
-      - "May need significant development"
+      - "Location or role concerns"
   1:
     label: "Not a Fit"
     description: "No clear interest or significant concerns"
     criteria:
       - "No genuine interest in marketing"
       - "Red flags present"
-      - "Poor communication or fit"
+      - "Location doesn't work"
 
 # =============================================================================
-# RECOMMENDATION THRESHOLDS (More Generous for Juniors)
+# RECOMMENDATION THRESHOLDS
 # =============================================================================
 
 recommendations:
   strong_yes:
     min_weighted_score: 4.0
     label: "Strong Yes"
-    description: "Great junior candidate! Enthusiastic, capable, and good fit."
+    description: "Great fit! Enthusiastic, capable, and ready to contribute."
     action: "Move to hiring manager interview"
     next_steps:
       - "30-min chat with hiring manager"
-      - "Discuss specific projects and role expectations"
+      - "Discuss specific projects and start date"
   
   yes:
     min_weighted_score: 3.2
@@ -293,7 +298,7 @@ recommendations:
     action: "Review with hiring manager"
     next_steps:
       - "Discuss fit with hiring manager"
-      - "Consider for different role if available"
+      - "Consider if role expectations align"
   
   no:
     min_weighted_score: 0
@@ -327,19 +332,25 @@ ai_config:
   max_tokens: 400
   
   system_context: |
-    You are conducting a friendly, casual screening interview for a JUNIOR B2B marketer position.
+    You are conducting a friendly, casual screening interview for a JUNIOR MARKETER position.
+    
+    THE ROLE:
+    - Junior Marketer based in the Philadelphia area
+    - Supporting US-based projects and events
+    - Hands-on work: digital campaigns, content creation, day-to-day marketing execution
+    - This is an execution role, not a strategy role
     
     CRITICAL: This is an ENTRY-LEVEL role. Adjust your expectations accordingly:
-    - School projects, internships, and personal projects ALL count as valid experience
+    - School projects, internships, volunteer work, and personal projects ALL count
     - They may not have professional marketing experience yet - that's okay
     - Focus on POTENTIAL and ENTHUSIASM, not depth of expertise
     - Be encouraging and warm, not intimidating
     
-    ASSESSMENT AREAS (keep it simple):
-    1. Marketing Interest - Do they actually want to do marketing?
-    2. Learning Potential - Can they figure things out and grow?
-    3. AI Awareness - Are they open to using AI tools?
-    4. Communication - Can they express themselves clearly?
+    ASSESSMENT AREAS:
+    1. Marketing Interest - Do they want to do hands-on marketing work?
+    2. Execution Mindset - Can they get things done and stay organized?
+    3. Digital Comfort - Are they comfortable with social media and AI tools?
+    4. Role Fit - Does the location and role work for them?
     
     INTERVIEW STYLE:
     - Friendly and conversational, like chatting with a potential colleague
@@ -360,6 +371,7 @@ ai_config:
     - "Be warm and encouraging throughout"
     - "Accept answers at face value - don't interrogate"
     - "If they seem nervous, be extra friendly"
-    - "School projects and internships are valid experience"
+    - "School projects, volunteer work, and internships are valid experience"
     - "Focus on what they WANT to learn, not just what they know"
     - "Keep responses short and conversational"
+    - "Make sure to ask about Philadelphia area fit"
