@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow-up Interview - {{ evaluation.candidate_name }} - Nytro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-container followup-layout">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="logo">
+                <span class="logo-icon">N</span>
+                <span class="logo-text">Nytro</span>
+                <span class="admin-badge">Follow-up</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="{{ url_for('view_evaluation', session_id=original_session_id) }}" class="nav-link">Back to Evaluation</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+            </nav>
+        </header>
+
+        <div class="followup-container">
+            <!-- Sidebar with Context -->
+            <aside class="followup-sidebar">
+                <div class="sidebar-section">
+                    <h2>{{ evaluation.candidate_name }}</h2>
+                    <p class="candidate-email">{{ evaluation.candidate_email }}</p>
+                    <div class="score-mini">
+                        <span class="recommendation-badge rec-{{ evaluation.recommendation }}">
+                            {{ evaluation.recommendation_label }}
+                        </span>
+                        <span class="score-badge">{{ evaluation.weighted_average }}/5</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Focus Areas</h3>
+                    <ul class="focus-areas">
+                        {% for area in evaluation.followup_focus_areas %}
+                        <li>{{ area }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Suggested Questions</h3>
+                    <ol class="suggested-questions">
+                        {% for q in evaluation.followup_questions[:5] %}
+                        <li class="question-item" onclick="useQuestion(this)">{{ q }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Initial Strengths</h3>
+                    <ul class="mini-list strengths">
+                        {% for s in evaluation.strengths[:3] %}
+                        <li>{{ s }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Initial Concerns</h3>
+                    <ul class="mini-list concerns">
+                        {% for c in evaluation.concerns[:3] %}
+                        <li>{{ c }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="followup-main">
+                <!-- Start Screen -->
+                <div class="followup-start" id="startScreen">
+                    <div class="start-content">
+                        <h1>Follow-up Interview</h1>
+                        <p>You're about to conduct an AI-assisted follow-up interview with <strong>{{ evaluation.candidate_name }}</strong>.</p>
+                        <div class="start-info">
+                            <h3>How it works:</h3>
+                            <ul>
+                                <li>The AI will lead the conversation, probing deeper on flagged areas</li>
+                                <li>You can click suggested questions to have the AI ask them</li>
+                                <li>Type your own responses to guide the conversation</li>
+                                <li>The AI has full context from the initial interview</li>
+                            </ul>
+                        </div>
+                        <button class="btn-primary btn-large" onclick="startFollowup()">
+                            Start Follow-up Interview
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages followup-chat" id="chatMessages" style="display: none;"></div>
+
+                <!-- Input Area -->
+                <div class="input-container followup-input" id="inputContainer" style="display: none;">
+                    <form id="responseForm" onsubmit="submitResponse(event)">
+                        <div class="input-wrapper">
+                            <textarea
+                                id="responseInput"
+                                placeholder="Type candidate's response or your notes..."
+                                rows="1"
+                                required
+                            ></textarea>
+                            <button type="submit" class="btn-send" id="sendBtn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const originalSessionId = '{{ original_session_id }}';
+        let isProcessing = false;
+
+        function addMessage(role, content) {
+            const chatMessages = document.getElementById('chatMessages');
+            const message = document.createElement('div');
+            message.className = `message ${role}`;
+            
+            const avatar = role === 'assistant' ? 'AI' : 'C';
+            const label = role === 'assistant' ? 'AI Interviewer' : 'Candidate';
+            
+            message.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-label">${label}</div>
+                    <div class="message-bubble">${escapeHtml(content)}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typing = document.createElement('div');
+            typing.className = 'message assistant';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = `
+                <div class="message-avatar">AI</div>
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typing);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function startFollowup() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('chatMessages').style.display = 'flex';
+            document.getElementById('inputContainer').style.display = 'block';
+
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/api/admin/followup/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ original_session_id: originalSessionId })
+                });
+
+                removeTypingIndicator();
+                const data = await response.json();
+
+                if (data.success) {
+                    addMessage('assistant', data.message);
+                } else {
+                    addMessage('assistant', 'Error starting follow-up: ' + data.error);
+                }
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage('assistant', 'Error connecting to server');
+            }
+        }
+
+        async function submitResponse(event) {
+            event.preventDefault();
+            
+            const input = document.getElementById('responseInput');
+            const response = input.value.trim();
+            
+            if (!response || isProcessing) return;
+            
+            isProcessing = true;
+            input.value = '';
+            
+            addMessage('user', response);
+            showTypingIndicator();
+
+            try {
+                const apiResponse = await fetch('/api/admin/followup/respond', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ response })
+                });
+
+                removeTypingIndicator();
+                const data = await apiResponse.json();
+
+                if (data.success) {
+                    addMessage('assistant', data.message);
+                } else {
+                    addMessage('assistant', 'Error: ' + data.error);
+                }
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage('assistant', 'Error connecting to server');
+            }
+
+            isProcessing = false;
+            input.focus();
+        }
+
+        function useQuestion(element) {
+            const question = element.textContent;
+            document.getElementById('responseInput').value = `[Interviewer asks]: ${question}`;
+            document.getElementById('responseInput').focus();
+        }
+
+        // Auto-resize textarea
+        document.getElementById('responseInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+    </script>
+</body>
+</html>

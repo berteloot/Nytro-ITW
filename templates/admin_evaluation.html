@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation - {{ evaluation.candidate_name }} - Nytro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="logo">
+                <span class="logo-icon">N</span>
+                <span class="logo-text">Nytro</span>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link logout">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="breadcrumb">
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                <span>/</span>
+                <span>{{ evaluation.candidate_name }}</span>
+            </div>
+
+            <!-- Candidate Header -->
+            <div class="evaluation-header">
+                <div class="candidate-info">
+                    <h1>{{ evaluation.candidate_name }}</h1>
+                    <p class="candidate-email">{{ evaluation.candidate_email }}</p>
+                    <p class="interview-date">Interviewed: {{ evaluation.interview_date[:10] }}</p>
+                </div>
+                <div class="evaluation-score">
+                    <div class="score-circle rec-{{ evaluation.recommendation }}">
+                        <span class="score-value">{{ evaluation.weighted_average }}</span>
+                        <span class="score-label">/5</span>
+                    </div>
+                    <span class="recommendation-badge rec-{{ evaluation.recommendation }}">
+                        {{ evaluation.recommendation_label }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-bar">
+                {% if evaluation.recommended_for_followup %}
+                <a href="{{ url_for('followup_interview', session_id=session_id) }}" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Conduct Follow-up Interview
+                </a>
+                {% endif %}
+                <button class="btn-secondary" onclick="downloadGuide()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download Follow-up Guide
+                </button>
+                <a href="{{ url_for('export_evaluation', session_id=session_id) }}" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Export JSON
+                </a>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="card">
+                <h2>Summary</h2>
+                <p class="summary-text">{{ evaluation.overall_summary }}</p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="two-column">
+                <!-- Strengths -->
+                <div class="card">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-green">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Strengths
+                    </h2>
+                    <ul class="strength-list">
+                        {% for strength in evaluation.strengths %}
+                        <li>{{ strength }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Concerns -->
+                <div class="card">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-yellow">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        Concerns
+                    </h2>
+                    <ul class="concern-list">
+                        {% for concern in evaluation.concerns %}
+                        <li>{{ concern }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Skill Scores -->
+            <div class="card">
+                <h2>Skill Assessment</h2>
+                <div class="skills-grid">
+                    {% for skill_id, score in evaluation.skill_scores.items() %}
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <h3>{{ score.skill_name }}</h3>
+                            <div class="skill-score">
+                                <span class="score-num">{{ score.score }}</span>/5
+                                {% if score.follow_up_needed %}
+                                <span class="followup-flag" title="Follow-up needed">!</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: {{ score.score * 20 }}%"></div>
+                        </div>
+                        <div class="skill-confidence">
+                            Confidence: {{ (score.confidence * 100)|int }}%
+                        </div>
+                        {% if score.evidence %}
+                        <div class="skill-evidence">
+                            <strong>Evidence:</strong>
+                            <ul>
+                                {% for e in score.evidence[:2] %}
+                                <li>{{ e }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        {% if score.concerns %}
+                        <div class="skill-concerns">
+                            <strong>Concerns:</strong>
+                            <ul>
+                                {% for c in score.concerns[:2] %}
+                                <li>{{ c }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Follow-up Questions -->
+            <div class="card">
+                <h2>Recommended Follow-up Questions</h2>
+                <ol class="followup-questions">
+                    {% for question in evaluation.followup_questions %}
+                    <li>{{ question }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Interview Transcript -->
+            <div class="card">
+                <h2>Interview Transcript</h2>
+                <div class="transcript">
+                    {% for turn in session_data.conversation_history %}
+                    <div class="transcript-turn {{ 'assistant' if turn.role == 'assistant' else 'user' }}">
+                        <div class="turn-label">{{ 'AI Interviewer' if turn.role == 'assistant' else 'Candidate' }}</div>
+                        <div class="turn-content">{{ turn.content }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function downloadGuide() {
+            try {
+                const response = await fetch('{{ url_for("get_followup_guide", session_id=session_id) }}');
+                const data = await response.json();
+                
+                const blob = new Blob([data.guide], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'followup_guide_{{ evaluation.candidate_name | replace(" ", "_") }}.txt';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            } catch (error) {
+                console.error('Error downloading guide:', error);
+                alert('Failed to download guide');
+            }
+        }
+    </script>
+</body>
+</html>

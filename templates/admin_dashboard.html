@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nytro Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="logo">
+                <span class="logo-icon">N</span>
+                <span class="logo-text">Nytro</span>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link active">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link logout">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-page-header">
+                <h1>Interview Dashboard</h1>
+                <p>Review AI interview evaluations and manage follow-ups</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ evaluations|length }}</div>
+                    <div class="stat-label">Total Interviews</div>
+                </div>
+                <div class="stat-card stat-green">
+                    <div class="stat-value">{{ evaluations|selectattr('recommendation', 'in', ['strong_yes', 'yes'])|list|length }}</div>
+                    <div class="stat-label">Recommended</div>
+                </div>
+                <div class="stat-card stat-yellow">
+                    <div class="stat-value">{{ evaluations|selectattr('recommendation', 'equalto', 'maybe')|list|length }}</div>
+                    <div class="stat-label">Maybe</div>
+                </div>
+                <div class="stat-card stat-red">
+                    <div class="stat-value">{{ evaluations|selectattr('recommendation', 'equalto', 'no')|list|length }}</div>
+                    <div class="stat-label">Not Recommended</div>
+                </div>
+            </div>
+
+            <!-- Evaluations Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2>Recent Interviews</h2>
+                </div>
+                
+                {% if evaluations %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Email</th>
+                            <th>Score</th>
+                            <th>Recommendation</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eval in evaluations %}
+                        <tr>
+                            <td class="candidate-name">{{ eval.candidate_name }}</td>
+                            <td>{{ eval.candidate_email }}</td>
+                            <td>
+                                <span class="score-badge">{{ eval.score }}/5</span>
+                            </td>
+                            <td>
+                                <span class="recommendation-badge rec-{{ eval.recommendation }}">
+                                    {{ eval.recommendation_label }}
+                                </span>
+                            </td>
+                            <td>{{ eval.timestamp[:10] }}</td>
+                            <td class="actions-cell">
+                                <a href="{{ url_for('view_evaluation', session_id=eval.session_id) }}" class="btn-action">
+                                    View Details
+                                </a>
+                                {% if eval.recommendation in ['strong_yes', 'yes', 'maybe'] %}
+                                <a href="{{ url_for('followup_interview', session_id=eval.session_id) }}" class="btn-action btn-followup">
+                                    Follow-up
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="22" y1="11" x2="16" y2="11"/>
+                    </svg>
+                    <h3>No interviews yet</h3>
+                    <p>Completed interviews will appear here</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>

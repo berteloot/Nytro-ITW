@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nytro Junior Marketer Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">N</span>
+                <span class="logo-text">Nytro</span>
+            </div>
+            <div class="header-right">
+                <span class="ai-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 1 0 10 10H12V2z"/>
+                        <path d="M12 2a10 10 0 0 1 10 10"/>
+                        <circle cx="12" cy="12" r="4"/>
+                    </svg>
+                    AI-Powered
+                </span>
+                <div class="position-badge">Junior Marketer Interview</div>
+            </div>
+        </header>
+
+        <!-- Phase Indicator -->
+        <div class="phase-container" id="phaseContainer" style="display: none;">
+            <div class="phase-indicator">
+                <div class="phase-item" data-phase="introduction">
+                    <span class="phase-dot"></span>
+                    <span class="phase-label">Welcome</span>
+                </div>
+                <div class="phase-item" data-phase="collect_info">
+                    <span class="phase-dot"></span>
+                    <span class="phase-label">Your Info</span>
+                </div>
+                <div class="phase-item" data-phase="skills_assessment">
+                    <span class="phase-dot"></span>
+                    <span class="phase-label">Skills</span>
+                </div>
+                <div class="phase-item" data-phase="closing">
+                    <span class="phase-dot"></span>
+                    <span class="phase-label">Wrap Up</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <h1>Welcome to Your Interview</h1>
+                <p>You're applying for the <strong>Junior Marketer</strong> position at Nytro.</p>
+                
+                <div class="ai-info-card">
+                    <div class="ai-info-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+                    </div>
+                    <div class="ai-info-content">
+                        <h3>AI-Powered Conversation</h3>
+                        <p>This interview is conducted by our AI assistant. It will adapt questions based on your responses and have a natural conversation with you about your experience.</p>
+                    </div>
+                </div>
+                
+                <ul class="welcome-list">
+                    <li>This typically takes 15-20 minutes</li>
+                    <li>Answer naturally - this is a conversation, not a test</li>
+                    <li>Share specific examples when you can</li>
+                    <li>Feel free to ask questions at the end</li>
+                </ul>
+                <button class="btn-primary" id="startBtn">Start Interview</button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages" style="display: none;"></div>
+
+            <!-- Completion Screen -->
+            <div class="completion-screen" id="completionScreen" style="display: none;">
+                <div class="completion-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <h2>Interview Complete!</h2>
+                <p id="completionMessage"></p>
+                <div class="next-steps">
+                    <h3>What's Next?</h3>
+                    <ul>
+                        <li>Our AI has generated an evaluation of your interview</li>
+                        <li>A human reviewer will examine the results</li>
+                        <li>Expect to hear back within 5-7 business days</li>
+                        <li>Check your email for updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-container" id="inputContainer" style="display: none;">
+            <form id="responseForm">
+                <div class="input-wrapper">
+                    <textarea
+                        id="responseInput"
+                        placeholder="Type your answer here..."
+                        rows="1"
+                        required
+                    ></textarea>
+                    <button type="submit" class="btn-send" id="sendBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-hint">Press Enter to send, Shift+Enter for new line</div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

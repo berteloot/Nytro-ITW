@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Nytro Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
+                <span class="logo-icon">N</span>
+                <span class="logo-text">Nytro</span>
+            </div>
+            
+            <h1>Admin Login</h1>
+            <p class="login-subtitle">Access the interview management dashboard</p>
+            
+            {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <form method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter admin password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+            </form>
+            
+            <a href="{{ url_for('index') }}" class="back-link">Back to Interview</a>
+        </div>
+    </div>
+</body>
+</html>

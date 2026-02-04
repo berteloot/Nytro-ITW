@@ -1,0 +1,69 @@
+{
+  "candidate_name": "Sarah Johnson",
+  "interview_date": "2026-02-04T18:07:01.989096",
+  "position": "Junior Marketer",
+  "company": "Nytro",
+  "responses": {
+    "intro": {
+      "question": "Hi! I'm the Nytro hiring assistant. I'll be conducting your initial interview for the Junior Marketer position. This should take about 15-20 minutes. Let's start with your name?",
+      "answer": "Sarah Johnson",
+      "timestamp": "2026-02-04T18:07:01.988954"
+    },
+    "location": {
+      "question": "Great to meet you, {name}! This position is based in the Philadelphia area. Can you confirm your current location and whether you're able to work in or relocate to the Philadelphia area?",
+      "answer": "I'm currently in Philadelphia and available to work locally.",
+      "timestamp": "2026-02-04T18:07:01.988980"
+    },
+    "background": {
+      "question": "Tell me a bit about your background in marketing. What experience do you have, even if it's from internships, coursework, or personal projects?",
+      "answer": "I graduated with a degree in Marketing last year and completed two internships. During my internship at a local agency, I managed social media accounts and helped with email campaigns. I also ran the social media for my university's business club, growing our Instagram following by 300% in one semester.",
+      "timestamp": "2026-02-04T18:07:01.988986"
+    },
+    "digital_campaigns": {
+      "question": "This role involves working on digital campaigns. What digital marketing channels or platforms are you familiar with? (e.g., social media, email marketing, Google Ads, SEO, etc.)",
+      "answer": "I'm very comfortable with social media platforms, especially Instagram, Facebook, LinkedIn, and TikTok. I've also worked with email marketing through Mailchimp and have basic knowledge of Google Analytics and Google Ads. I'm eager to learn more about SEO and paid advertising.",
+      "timestamp": "2026-02-04T18:07:01.988990"
+    },
+    "content_experience": {
+      "question": "Content creation is a key part of this role. Can you describe any experience you have creating marketing content? This could include writing, design, video, or other formats.",
+      "answer": "I've created various content types including social media posts (graphics and captions), blog articles for company websites, email newsletters, and short-form videos for Instagram Reels and TikTok. I use Canva for design and have basic video editing skills.",
+      "timestamp": "2026-02-04T18:07:01.988993"
+    },
+    "tools": {
+      "question": "What marketing tools or software are you comfortable using? (e.g., social media management tools, email platforms, analytics tools, design software, etc.)",
+      "answer": "I use Canva for design, Hootsuite for social media scheduling, Mailchimp for email marketing, Google Analytics for tracking website performance, and I'm familiar with the Meta Business Suite for Facebook and Instagram ads.",
+      "timestamp": "2026-02-04T18:07:01.988996"
+    },
+    "campaign_example": {
+      "question": "Can you walk me through a marketing project or campaign you've worked on? What was your role, and what were the results?",
+      "answer": "At my internship, I led a back-to-school campaign for a local retail client. I created a content calendar, designed graphics, wrote copy, and scheduled posts across three platforms. We also ran a giveaway that increased engagement by 45% and brought in 200 new followers in two weeks. The campaign resulted in a 20% increase in store traffic during the promotion period.",
+      "timestamp": "2026-02-04T18:07:01.988999"
+    },
+    "strengths": {
+      "question": "What do you consider your strongest marketing skills? What areas are you most excited to develop further?",
+      "answer": "My strongest skills are content creation and social media management. I'm creative, detail-oriented, and good at writing engaging copy. I'm most excited to develop my skills in paid advertising, data analysis, and campaign strategy. I want to better understand how to measure ROI and optimize campaigns based on data.",
+      "timestamp": "2026-02-04T18:07:01.989001"
+    },
+    "teamwork": {
+      "question": "This role involves day-to-day marketing execution as part of a team. Tell me about a time you collaborated with others on a project. What was your approach?",
+      "answer": "In my university business club, I worked with a team of five to organize a marketing conference. I handled all promotional materials while others managed logistics and sponsorships. We had weekly meetings where I presented our social media metrics and adjusted our strategy based on what was working. Clear communication and being open to feedback helped us sell out the event.",
+      "timestamp": "2026-02-04T18:07:01.989003"
+    },
+    "why_nytro": {
+      "question": "What interests you about this Junior Marketer position at Nytro?",
+      "answer": "I'm really interested in Nytro's focus on digital campaigns and the opportunity to work on diverse US projects. As a junior marketer, I want to learn from experienced professionals and work somewhere that values creativity and data-driven decision-making. The variety of work and the collaborative environment really appeal to me.",
+      "timestamp": "2026-02-04T18:07:01.989005"
+    },
+    "availability": {
+      "question": "When would you be available to start if offered the position?",
+      "answer": "I'm available to start immediately, or can provide two weeks' notice to my current part-time position if needed.",
+      "timestamp": "2026-02-04T18:07:01.989006"
+    },
+    "questions": {
+      "question": "Do you have any questions for us about the role, team, or company?",
+      "answer": "Yes! I'd love to know more about the team structure and who I'd be working with directly. Also, what does success look like in this role after the first 6 months? And are there opportunities for professional development or training?",
+      "timestamp": "2026-02-04T18:07:01.989008"
+    }
+  },
+  "status": "completed"
+}
