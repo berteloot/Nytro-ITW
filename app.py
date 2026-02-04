@@ -122,7 +122,7 @@ def create_note(contact_id: str, note_body: str) -> dict:
     url = "https://api.hubapi.com/crm/v3/objects/notes"
     payload = {
         "properties": {
-            "hs_timestamp": datetime.now().isoformat(),
+            "hs_timestamp": str(int(datetime.now().timestamp() * 1000)),  # Unix ms
             "hs_note_body": note_body
         },
         "associations": [{
@@ -196,31 +196,43 @@ def format_evaluation_note(evaluation: CandidateEvaluation, transcript: list) ->
 
 def send_evaluation_to_hubspot(evaluation: CandidateEvaluation, transcript: list) -> dict:
     """Send evaluation to HubSpot"""
+    print(f"[HubSpot] Attempting to send evaluation for {evaluation.candidate_name} ({evaluation.candidate_email})")
+    
     if not HUBSPOT_ACCESS_TOKEN:
+        print("[HubSpot] ERROR: No access token configured")
         return {"success": False, "error": "HubSpot not configured"}
     
     if not evaluation.candidate_email:
+        print("[HubSpot] ERROR: No email provided")
         return {"success": False, "error": "No email provided"}
     
     # Find or create contact
     contact = search_contact_by_email(evaluation.candidate_email)
     if contact:
         contact_id = contact["id"]
+        print(f"[HubSpot] Found existing contact: {contact_id}")
     else:
+        print(f"[HubSpot] Creating new contact...")
         contact = create_contact(
             evaluation.candidate_name, 
             evaluation.candidate_email
         )
         if not contact:
+            print("[HubSpot] ERROR: Failed to create contact")
             return {"success": False, "error": "Failed to create contact"}
         contact_id = contact["id"]
+        print(f"[HubSpot] Created contact: {contact_id}")
     
     # Create note with evaluation
+    print(f"[HubSpot] Creating note for contact {contact_id}...")
     note_body = format_evaluation_note(evaluation, transcript)
     note = create_note(contact_id, note_body)
     
     if not note:
+        print("[HubSpot] ERROR: Failed to create note")
         return {"success": False, "error": "Failed to create note"}
+    
+    print(f"[HubSpot] SUCCESS: Note created with ID {note.get('id')}")
     
     return {
         "success": True,
