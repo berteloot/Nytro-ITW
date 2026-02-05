@@ -4,6 +4,7 @@ Powered by OpenAI for intelligent, adaptive candidate interviews.
 """
 
 import os
+import re
 import json
 import yaml
 from datetime import datetime
@@ -377,20 +378,30 @@ CURRENT PHASE: Closing
             needed_fields = [f for f in collect_order if f not in collected]
             
             if needed_fields:
-                next_field = needed_fields[0]
-                session.collected_info[next_field] = user_message
+                # Content-based assignment: detect email/LinkedIn URL so we map correctly
+                # even if the AI asked questions in wrong order
+                msg = user_message.strip()
+                target_field = None
+                if "linkedin.com" in msg.lower() and "linkedin_url" in needed_fields:
+                    target_field = "linkedin_url"
+                elif re.search(r"[\w.-]+@[\w.-]+\.\w+", msg) and "email" in needed_fields:
+                    target_field = "email"
+                elif "name" in needed_fields and not ("linkedin.com" in msg.lower() or "@" in msg):
+                    target_field = "name"
+                if target_field is None:
+                    target_field = needed_fields[0]
                 
-                # Update specific fields
-                if next_field == "name":
-                    session.candidate_name = user_message.strip()
-                elif next_field == "email":
-                    session.candidate_email = user_message.strip()
-                elif next_field == "linkedin_url":
-                    session.candidate_linkedin = user_message.strip()
-                elif next_field == "location":
-                    session.candidate_location = user_message.strip()
-                elif next_field == "availability":
-                    session.candidate_availability = user_message.strip()
+                session.collected_info[target_field] = msg
+                if target_field == "name":
+                    session.candidate_name = msg
+                elif target_field == "email":
+                    session.candidate_email = msg
+                elif target_field == "linkedin_url":
+                    session.candidate_linkedin = msg
+                elif target_field == "location":
+                    session.candidate_location = msg
+                elif target_field == "availability":
+                    session.candidate_availability = msg
             
             # Check if all info collected (same order as collect_order)
             still_needed = [f for f in collect_order if f not in session.collected_info]
