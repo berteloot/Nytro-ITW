@@ -520,50 +520,70 @@ CURRENT PHASE: Closing - Candidate just responded
             session.last_validation_error = ""  # Clear on each new response
             
             if needed_fields:
-                # Content-based assignment: detect email/LinkedIn URL so we map correctly.
-                # Detection patterns aligned with _extract_email / _extract_linkedin_url to avoid
-                # assigning a field then failing validation (e.g. "a@b.c" → email but invalid).
                 msg = user_message.strip()
-                target_field = None
-                _linkedin_in_msg = "linkedin.com/in/" in msg.lower()
-                _email_match = re.search(
-                    r'[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
-                    msg
-                )
-                if _linkedin_in_msg and "linkedin_url" in needed_fields:
-                    target_field = "linkedin_url"
-                elif _email_match and "email" in needed_fields:
-                    target_field = "email"
-                elif "name" in needed_fields and not (_linkedin_in_msg or "@" in msg):
-                    target_field = "name"
-                if target_field is None:
-                    target_field = needed_fields[0]
-                
-                # Validate email and LinkedIn before accepting
-                if target_field == "email":
+                next_field = needed_fields[0]
+
+                # When we're asking for email, treat any message containing "@" as an email
+                # attempt and validate immediately. Never accept or move on without valid email.
+                if next_field == "email" and "@" in msg:
                     extracted = self._extract_email(msg)
                     if not extracted:
                         session.last_validation_error = "email"
                         return
-                    msg = extracted
-                elif target_field == "linkedin_url":
+                    # Valid email: assign and continue
+                    session.collected_info["email"] = extracted
+                    session.candidate_email = extracted
+                    # Fall through to still_needed check below (don't run generic assignment)
+                elif next_field == "linkedin_url" and "linkedin.com" in msg.lower():
+                    # When we're asking for LinkedIn, validate any message that mentions linkedin
                     extracted = self._extract_linkedin_url(msg)
                     if not extracted:
                         session.last_validation_error = "linkedin_url"
                         return
-                    msg = extracted
-                
-                session.collected_info[target_field] = msg
-                if target_field == "name":
-                    session.candidate_name = msg
-                elif target_field == "email":
-                    session.candidate_email = msg
-                elif target_field == "linkedin_url":
-                    session.candidate_linkedin = msg
-                elif target_field == "location":
-                    session.candidate_location = msg
-                elif target_field == "availability":
-                    session.candidate_availability = msg
+                    session.collected_info["linkedin_url"] = extracted
+                    session.candidate_linkedin = extracted
+                else:
+                    # Content-based assignment for other cases
+                    target_field = None
+                    _linkedin_in_msg = "linkedin.com/in/" in msg.lower()
+                    _email_match = re.search(
+                        r'[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+                        msg
+                    )
+                    if _linkedin_in_msg and "linkedin_url" in needed_fields:
+                        target_field = "linkedin_url"
+                    elif _email_match and "email" in needed_fields:
+                        target_field = "email"
+                    elif "name" in needed_fields and not (_linkedin_in_msg or "@" in msg):
+                        target_field = "name"
+                    if target_field is None:
+                        target_field = needed_fields[0]
+
+                    # Validate email and LinkedIn before accepting
+                    if target_field == "email":
+                        extracted = self._extract_email(msg)
+                        if not extracted:
+                            session.last_validation_error = "email"
+                            return
+                        msg = extracted
+                    elif target_field == "linkedin_url":
+                        extracted = self._extract_linkedin_url(msg)
+                        if not extracted:
+                            session.last_validation_error = "linkedin_url"
+                            return
+                        msg = extracted
+
+                    session.collected_info[target_field] = msg
+                    if target_field == "name":
+                        session.candidate_name = msg
+                    elif target_field == "email":
+                        session.candidate_email = msg
+                    elif target_field == "linkedin_url":
+                        session.candidate_linkedin = msg
+                    elif target_field == "location":
+                        session.candidate_location = msg
+                    elif target_field == "availability":
+                        session.candidate_availability = msg
             
             # Check if all info collected (never skip linkedin_url if it's required)
             still_needed = [f for f in collect_order if f not in session.collected_info]
