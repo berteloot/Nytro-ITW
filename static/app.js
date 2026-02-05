@@ -292,10 +292,14 @@ class InterviewChatbot {
                     // Add final message
                     this.addBotMessage(data.message);
                     
-                    // Show completion after a delay
+                    // Hide input so candidate knows the chat is over
+                    this.inputContainer.style.display = 'none';
+                    
+                    // Show completion after a longer delay so the
+                    // candidate can read the closing message
                     setTimeout(() => {
                         this.showCompletion(data);
-                    }, 2000);
+                    }, 8000);
                 } else {
                     // Show next message
                     this.addBotMessage(data.message);
