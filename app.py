@@ -405,6 +405,10 @@ def process_response():
                         session_data.get('conversation_history', [])
                     )
                     response_data["hubspot"] = hubspot_result
+                    
+                    # Store HubSpot contact_id for later feedback
+                    if hubspot_result.get("success") and hubspot_result.get("contact_id"):
+                        completed_evaluations[session_id]["hubspot_contact_id"] = hubspot_result["contact_id"]
                 except Exception as hub_error:
                     print(f"[ERROR] HubSpot failed: {hub_error}")
                     response_data["hubspot"] = {"success": False, "error": str(hub_error)}
@@ -494,6 +498,44 @@ def submit_feedback():
                 'comment': comment,
                 'timestamp': datetime.now().isoformat()
             }
+            
+            # Send feedback to HubSpot as a follow-up note
+            contact_id = completed_evaluations[session_id].get('hubspot_contact_id')
+            if contact_id and HUBSPOT_ACCESS_TOKEN:
+                try:
+                    # Get candidate name from evaluation
+                    evaluation_data = completed_evaluations[session_id].get('evaluation', {})
+                    candidate_name = evaluation_data.get('candidate_name', 'Candidate')
+                    
+                    # Format rating for display
+                    rating_labels = {
+                        'positive': '👍 Good',
+                        'neutral': '😐 Okay', 
+                        'negative': '👎 Could be better'
+                    }
+                    rating_display = rating_labels.get(rating, rating)
+                    
+                    # Create feedback note
+                    feedback_note = f"""<h2>📝 Candidate Feedback on Interview Experience</h2>
+<p><strong>Candidate:</strong> {candidate_name}</p>
+<p><strong>Rating:</strong> {rating_display}</p>
+"""
+                    if comment:
+                        feedback_note += f"<p><strong>Comments:</strong></p><p>{comment}</p>"
+                    else:
+                        feedback_note += "<p><em>No additional comments provided.</em></p>"
+                    
+                    feedback_note += f"""
+<hr>
+<p><em>Feedback submitted at {datetime.now().strftime('%Y-%m-%d %H:%M')} via Nytro AI Interview Chatbot.</em></p>
+"""
+                    note_result = create_note(contact_id, feedback_note)
+                    if note_result:
+                        print(f"[HubSpot] Feedback note created: {note_result.get('id')}")
+                    else:
+                        print("[HubSpot] Failed to create feedback note")
+                except Exception as hub_error:
+                    print(f"[HubSpot] Feedback note error: {hub_error}")
         
         return jsonify({"success": True, "message": "Feedback received"})
     except Exception as e:
