@@ -208,7 +208,9 @@ After they confirm, move to collecting their name."""
 
         elif session.phase == "collect_info":
             collected = list(session.collected_info.keys())
-            needed = [f['field'] for f in config['required_info'] if f['field'] not in collected]
+            # Use explicit order from config so we always ask name → email → linkedin_url
+            collect_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order', [f['field'] for f in config['required_info']])
+            needed = [f for f in collect_order if f not in collected]
             
             if not needed:
                 return """
@@ -217,13 +219,16 @@ All required info collected. Transition smoothly with a brief intro like:
 "Great! Let's jump in." Then start with the first competency area."""
             
             next_field = needed[0]
-            field_config = next(f for f in config['required_info'] if f['field'] == next_field)
+            field_config = next((f for f in config['required_info'] if f['field'] == next_field), None)
+            if not field_config:
+                field_config = {'field': next_field, 'question': f'Please provide your {next_field}.'}
             
             return f"""
 CURRENT PHASE: Collecting Required Information
+You MUST ask for each of these in order. Do not skip any.
 Still need to collect: {', '.join(needed)}
 Next to collect: {next_field}
-Question to ask: "{field_config['question']}"
+Question to ask (ask exactly this): "{field_config['question']}"
 """
 
         elif session.phase == "skills_assessment":
@@ -367,7 +372,9 @@ CURRENT PHASE: Closing
         # Handle info collection
         if session.phase == "collect_info":
             collected = list(session.collected_info.keys())
-            needed_fields = [f['field'] for f in config['required_info'] if f['field'] not in collected]
+            # Use explicit collect order so we always ask name → email → linkedin_url
+            collect_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order', [f['field'] for f in config['required_info']])
+            needed_fields = [f for f in collect_order if f not in collected]
             
             if needed_fields:
                 next_field = needed_fields[0]
@@ -385,8 +392,8 @@ CURRENT PHASE: Closing
                 elif next_field == "availability":
                     session.candidate_availability = user_message.strip()
             
-            # Check if all info collected
-            still_needed = [f['field'] for f in config['required_info'] if f['field'] not in session.collected_info]
+            # Check if all info collected (same order as collect_order)
+            still_needed = [f for f in collect_order if f not in session.collected_info]
             if not still_needed:
                 session.phase = "skills_assessment"
             return
