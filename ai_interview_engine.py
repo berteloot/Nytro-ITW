@@ -126,13 +126,18 @@ class AIInterviewEngine:
     
     def _extract_email(self, text: str) -> Optional[str]:
         """Extract and validate email from text. Returns email or None if invalid."""
+        text = text.strip()
+        # Reject obviously incomplete: ends with @ or has no domain
+        if text.endswith('@') or '@' not in text:
+            return None
         # Match common email patterns, e.g. name@domain.com
         match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
         if not match:
             return None
         email = match.group(0)
-        # Basic sanity: not too short, has @ and dot in domain
-        if len(email) < 6 or email.count('@') != 1 or '.' not in email.split('@')[-1]:
+        local, domain = email.split('@', 1)
+        # Domain must have a dot (e.g. gmail.com) and be at least 4 chars (a.co)
+        if len(domain) < 4 or '.' not in domain or len(local) < 1:
             return None
         return email
     
