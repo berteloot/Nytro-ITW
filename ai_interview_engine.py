@@ -127,44 +127,76 @@ class AIInterviewEngine:
     def _extract_email(self, text: str) -> Optional[str]:
         """Extract and validate email from text. Returns email or None if invalid."""
         text = text.strip()
-        # Reject strings with spaces (e.g. "berteloo @ com") - invalid format
+
+        # Reject strings with spaces (e.g. "berteloo @ com")
         if ' ' in text:
             return None
+
         # Reject obviously incomplete: ends with @ or has no domain
         if text.endswith('@') or '@' not in text:
             return None
-        # Match common email patterns, e.g. name@domain.com
-        match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
-        if not match:
+
+        # Full validation regex:
+        # - Local part: starts with alphanumeric, can contain ._%+-, ends with alphanumeric
+        # - No consecutive dots (checked below)
+        # - Domain: starts with alphanumeric, can contain .-, TLD is 2+ letters
+        email_pattern = r'^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, text):
             return None
-        email = match.group(0)
+
+        email = text
         local, domain = email.split('@', 1)
-        # Domain must have a dot (e.g. gmail.com) and be at least 4 chars (a.co)
-        if len(domain) < 4 or '.' not in domain or len(local) < 1:
+
+        # Check for consecutive dots in local part
+        if '..' in local:
             return None
+
+        # Domain must have a dot and be at least 4 chars (e.g., "a.co")
+        if len(domain) < 4 or '.' not in domain:
+            return None
+
+        # Validate TLD is reasonable (2-10 chars, letters only)
+        tld = domain.rsplit('.', 1)[-1]
+        if not tld.isalpha() or len(tld) < 2 or len(tld) > 10:
+            return None
+
         return email
     
     def _extract_linkedin_url(self, text: str) -> Optional[str]:
         """Extract and validate LinkedIn profile URL. Returns URL or None if invalid."""
         text = text.strip()
-        # Reject malformed or truncated input
-        if '\\' in text or len(text) < 19:
+
+        # Reject malformed input with backslashes
+        if '\\' in text:
             return None
+
         text_lower = text.lower()
+
         # Require full path: linkedin.com/in/username (not just linkedin.com)
         if 'linkedin.com/in/' not in text_lower:
             return None
-        # Match URLs like https://linkedin.com/in/username or linkedin.com/in/username
+
+        # LinkedIn usernames: letters, numbers, and hyphens only (no underscores).
+        # Capture including possible _ so we can reject; otherwise we'd truncate at _ (e.g. user_name -> user).
+        # Minimum 2 characters, maximum 100 (match may be mid-message so no $ anchor).
         match = re.search(
-            r'(https?://)?(www\.)?linkedin\.com/in/[\w\-]{2,}/?',
+            r'(https?://)?(www\.)?linkedin\.com/in/([a-zA-Z0-9\-_]{2,100})/?',
             text,
             re.IGNORECASE
         )
         if not match:
             return None
+
+        username = match.group(3)
+        if '_' in username or not re.match(r'^[a-zA-Z0-9\-]{2,100}$', username):
+            return None
+
         url = match.group(0).rstrip('/')
-        if not url.startswith('http'):
+
+        # Ensure https:// prefix
+        if not url.lower().startswith('http'):
             url = 'https://' + url
+
         return url
     
     def _get_system_prompt(self, session: InterviewSession) -> str:
@@ -460,14 +492,21 @@ CURRENT PHASE: Closing - Candidate just responded
             session.last_validation_error = ""  # Clear on each new response
             
             if needed_fields:
-                # Content-based assignment: detect email/LinkedIn URL so we map correctly
+                # Content-based assignment: detect email/LinkedIn URL so we map correctly.
+                # Detection patterns aligned with _extract_email / _extract_linkedin_url to avoid
+                # assigning a field then failing validation (e.g. "a@b.c" → email but invalid).
                 msg = user_message.strip()
                 target_field = None
-                if "linkedin.com" in msg.lower() and "linkedin_url" in needed_fields:
+                _linkedin_in_msg = "linkedin.com/in/" in msg.lower()
+                _email_match = re.search(
+                    r'[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+                    msg
+                )
+                if _linkedin_in_msg and "linkedin_url" in needed_fields:
                     target_field = "linkedin_url"
-                elif re.search(r"[\w.-]+@[\w.-]+\.\w+", msg) and "email" in needed_fields:
+                elif _email_match and "email" in needed_fields:
                     target_field = "email"
-                elif "name" in needed_fields and not ("linkedin.com" in msg.lower() or "@" in msg):
+                elif "name" in needed_fields and not (_linkedin_in_msg or "@" in msg):
                     target_field = "name"
                 if target_field is None:
                     target_field = needed_fields[0]
