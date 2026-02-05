@@ -198,6 +198,20 @@ class AIInterviewEngine:
             url = 'https://' + url
 
         return url
+
+    def _get_validation_error_message(self, error_type: str) -> str:
+        """Return a fixed message for immediate validation feedback (same turn)."""
+        if error_type == "email":
+            return (
+                "That doesn't look like a valid email address. We need a full address to continue, "
+                "for example name@example.com. Could you please provide your email again?"
+            )
+        if error_type == "linkedin_url":
+            return (
+                "That doesn't look like a valid LinkedIn profile URL. We need a link to your profile "
+                "to continue, for example https://linkedin.com/in/yourprofile. Could you please share it again?"
+            )
+        return "Please check your answer and try again."
     
     def _get_system_prompt(self, session: InterviewSession) -> str:
         """Generate the system prompt based on config and current state"""
@@ -436,6 +450,20 @@ CURRENT PHASE: Closing - Candidate just responded
         
         # Update session state based on response
         self._update_session_state(session, user_message)
+        
+        # When email or LinkedIn validation failed this turn, return a fixed message
+        # immediately so the user gets feedback in the same turn (no AI reply that
+        # thanks them and moves on).
+        if session.last_validation_error:
+            ai_response = self._get_validation_error_message(session.last_validation_error)
+            session.conversation_history.append(ConversationTurn(
+                role="assistant",
+                content=ai_response,
+                timestamp=datetime.now().isoformat(),
+                metadata={"phase": session.phase, "validation_error": session.last_validation_error}
+            ))
+            session.turn_count += 1
+            return ai_response, session
         
         # Check if interview should end
         if self._should_end_interview(session):
