@@ -143,12 +143,17 @@ class AIInterviewEngine:
     
     def _extract_linkedin_url(self, text: str) -> Optional[str]:
         """Extract and validate LinkedIn profile URL. Returns URL or None if invalid."""
+        text = text.strip()
+        # Reject malformed or truncated input
+        if '\\' in text or len(text) < 19:
+            return None
         text_lower = text.lower()
-        if 'linkedin.com' not in text_lower:
+        # Require full path: linkedin.com/in/username (not just linkedin.com)
+        if 'linkedin.com/in/' not in text_lower:
             return None
         # Match URLs like https://linkedin.com/in/username or linkedin.com/in/username
         match = re.search(
-            r'(https?://)?(www\.)?linkedin\.com/in/[\w\-]+/?',
+            r'(https?://)?(www\.)?linkedin\.com/in/[\w\-]{2,}/?',
             text,
             re.IGNORECASE
         )
