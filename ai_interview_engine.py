@@ -534,9 +534,22 @@ CURRENT PHASE: Closing - Candidate just responded
         
         # Handle introduction phase
         if session.phase == "introduction":
-            # Any response moves us to collect_info
             session.phase = "collect_info"
-            return
+            # If the user just confirmed readiness ("yes", "sure", etc.),
+            # return so the AI asks for their name next.
+            # But if the user skipped confirmation and typed their name
+            # directly, fall through to the collect_info handler so it
+            # gets stored properly (prevents email validation bypass).
+            msg_lower = user_message.strip().lower().rstrip('!.,')
+            confirmation_phrases = {
+                'yes', 'yeah', 'yep', 'yup', 'sure', 'ok', 'okay', 'ready',
+                'absolutely', 'of course', "let's go", 'lets go', "let's do it",
+                'lets do it', 'go ahead', 'start', 'begin', 'y', 'si', 'oui',
+                'go', 'alright', 'sounds good', 'im ready', "i'm ready",
+            }
+            if msg_lower in confirmation_phrases or len(user_message.strip()) <= 2:
+                return
+            # Fall through to collect_info — user likely provided their name directly
         
         # Handle info collection
         if session.phase == "collect_info":
