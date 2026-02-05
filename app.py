@@ -150,13 +150,25 @@ def create_note(contact_id: str, note_body: str) -> dict:
 
 
 def format_evaluation_note(evaluation: CandidateEvaluation, transcript: list) -> str:
-    """Format evaluation into an HTML note for HubSpot"""
+    """Format evaluation into an HTML note for HubSpot.
+    Order: candidate details, evaluation, full transcript.
+    """
+    linkedin = getattr(evaluation, "candidate_linkedin", "") or ""
+    linkedin_display = f'<p><strong>LinkedIn:</strong> <a href="{linkedin}">{linkedin}</a></p>' if linkedin else "<p><strong>LinkedIn:</strong> —</p>"
+
+    # 1. Candidate details at top
     note = f"""
-<h2>AI Interview - {evaluation.candidate_name}</h2>
+<h2>AI Interview – {evaluation.candidate_name}</h2>
+
+<div style="margin-bottom: 1.5em;">
+<p><strong>Name:</strong> {evaluation.candidate_name}</p>
+<p><strong>Email:</strong> {evaluation.candidate_email}</p>
+{linkedin_display}
 <p><strong>Date:</strong> {evaluation.interview_date}</p>
 <p><strong>Position:</strong> {evaluation.role}</p>
 <p><strong>AI Recommendation:</strong> {evaluation.recommendation_label}</p>
 <p><strong>Score:</strong> {evaluation.weighted_average}/5.0</p>
+</div>
 
 <hr>
 
@@ -181,7 +193,7 @@ def format_evaluation_note(evaluation: CandidateEvaluation, transcript: list) ->
         if score.follow_up_needed:
             note += " ⚡ Follow-up needed"
         note += "</li>\n"
-    
+
     note += """
 </ul>
 
@@ -190,9 +202,23 @@ def format_evaluation_note(evaluation: CandidateEvaluation, transcript: list) ->
 """
     for q in evaluation.followup_questions[:5]:
         note += f"<li>{q}</li>\n"
-    
+
     note += """
 </ol>
+
+<hr>
+
+<h3>Full conversation transcript</h3>
+<div style="margin-bottom: 1.5em;">
+"""
+    # 3. Full transcript at the end
+    for turn in transcript:
+        role_label = "Interviewer" if turn.get("role") == "assistant" else "Candidate"
+        content = (turn.get("content") or "").replace("<", "&lt;").replace(">", "&gt;")
+        note += f"<p><strong>{role_label}:</strong><br/>{content}</p>\n"
+
+    note += """
+</div>
 
 <hr>
 <p><em>This interview was conducted via the Nytro AI Interview Chatbot.</em></p>
@@ -644,6 +670,7 @@ def get_followup_guide(session_id):
     evaluation = CandidateEvaluation(
         candidate_name=eval_data['candidate_name'],
         candidate_email=eval_data['candidate_email'],
+        candidate_linkedin=eval_data.get('candidate_linkedin', '') or '',
         interview_date=eval_data['interview_date'],
         role=eval_data['role'],
         skill_scores=skill_scores,

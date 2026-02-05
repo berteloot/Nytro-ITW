@@ -33,6 +33,7 @@ class CandidateEvaluation:
     """Complete evaluation of a candidate"""
     candidate_name: str
     candidate_email: str
+    candidate_linkedin: str = ""
     interview_date: str
     role: str
     
@@ -71,6 +72,7 @@ class InterviewSession:
     session_id: str
     candidate_name: str = ""
     candidate_email: str = ""
+    candidate_linkedin: str = ""
     candidate_location: str = ""
     candidate_availability: str = ""
     
@@ -374,6 +376,8 @@ CURRENT PHASE: Closing
                     session.candidate_name = user_message.strip()
                 elif next_field == "email":
                     session.candidate_email = user_message.strip()
+                elif next_field == "linkedin_url":
+                    session.candidate_linkedin = user_message.strip()
                 elif next_field == "location":
                     session.candidate_location = user_message.strip()
                 elif next_field == "availability":
@@ -592,6 +596,7 @@ CURRENT PHASE: Closing
         return CandidateEvaluation(
             candidate_name=session.candidate_name,
             candidate_email=session.candidate_email,
+            candidate_linkedin=session.candidate_linkedin or "",
             interview_date=session.started_at,
             role=config['role']['title'],
             skill_scores=skill_scores,
@@ -814,6 +819,7 @@ INTERVIEW GUIDELINES
             "session_id": session.session_id,
             "candidate_name": session.candidate_name,
             "candidate_email": session.candidate_email,
+            "candidate_linkedin": session.candidate_linkedin,
             "candidate_location": session.candidate_location,
             "candidate_availability": session.candidate_availability,
             "started_at": session.started_at,
@@ -973,6 +979,7 @@ def evaluation_to_dict(evaluation: CandidateEvaluation) -> Dict:
     return {
         "candidate_name": evaluation.candidate_name,
         "candidate_email": evaluation.candidate_email,
+        "candidate_linkedin": evaluation.candidate_linkedin or "",
         "interview_date": evaluation.interview_date,
         "role": evaluation.role,
         "skill_scores": {

@@ -36,6 +36,9 @@
                 <div class="candidate-info">
                     <h1>{{ evaluation.candidate_name }}</h1>
                     <p class="candidate-email">{{ evaluation.candidate_email }}</p>
+                    {% if evaluation.get('candidate_linkedin') %}
+                    <p class="candidate-linkedin"><a href="{{ evaluation.candidate_linkedin }}" target="_blank" rel="noopener">LinkedIn profile</a></p>
+                    {% endif %}
                     <p class="interview-date">Interviewed: {{ evaluation.interview_date[:10] }}</p>
                 </div>
                 <div class="evaluation-score">

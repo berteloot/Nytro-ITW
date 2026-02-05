@@ -177,7 +177,7 @@ conversation_flow:
     wait_for_confirmation: true
   
   collect_info:
-    order: ["name", "email"]
+    order: ["name", "email", "linkedin_url"]
     transition: "Great! Let's dive in."
   
   # Interview phases (simplified)
@@ -321,6 +321,10 @@ required_info:
     question: "And what's the best email to reach you?"
     required: true
     validation: "email"
+
+  - field: "linkedin_url"
+    question: "What's your LinkedIn profile URL? (We use it to follow up and keep your info in one place.)"
+    required: true
 
 # =============================================================================
 # AI MODEL CONFIGURATION
