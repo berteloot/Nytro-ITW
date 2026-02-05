@@ -624,7 +624,25 @@ class InterviewChatbot {
     }
 
     scrollToBottom() {
-        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        // Use setTimeout to ensure DOM is fully updated before scrolling
+        setTimeout(() => {
+            // Scroll the chat messages container
+            if (this.chatMessages) {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+            
+            // Also scroll the parent chat container
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Also scroll the last message into view as final backup
+            const lastMessage = this.chatMessages?.lastElementChild;
+            if (lastMessage) {
+                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }, 50);
     }
 
     escapeHtml(text) {
