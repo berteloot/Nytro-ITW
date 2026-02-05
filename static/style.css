@@ -6,19 +6,25 @@
 }
 
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-color: #64748b;
+    /* POWER ORANGE Brand Identity */
+    --primary-accent: #F86A0E;
+    --primary-accent-hover: #e05f0c;
+    --primary-navy: #313C59;
+    --accent-blue: #2E5CD5;
+    --accent-teal: #00C0B4;
+    --primary-color: #F86A0E;
+    --primary-hover: #e05f0c;
+    --secondary-color: #313C59;
     --background: #f8fafc;
     --surface: #ffffff;
-    --text-primary: #1e293b;
+    --text-primary: #313C59;
     --text-secondary: #64748b;
     --border-color: #e2e8f0;
-    --success-color: #10b981;
+    --success-color: #00C0B4;
     --warning-color: #f59e0b;
     --error-color: #ef4444;
     --bot-bubble: #f1f5f9;
-    --user-bubble: #2563eb;
+    --user-bubble: #F86A0E;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
@@ -26,14 +32,19 @@
     --radius-md: 0.5rem;
     --radius-lg: 1rem;
     --radius-full: 9999px;
+    --hover-bg: #f1f5f9;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--background);
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.65;
     min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
 }
 
 /* Container */
@@ -72,30 +83,23 @@ body {
     gap: 0.5rem;
 }
 
-.logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--primary-color), #7c3aed);
-    color: white;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
+.logo.logo-center {
     justify-content: center;
-    font-weight: 700;
-    font-size: 1.25rem;
+    margin-bottom: 2rem;
 }
 
-.logo-text {
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--text-primary);
+.logo-img {
+    height: 36px;
+    width: auto;
+    display: block;
+    object-fit: contain;
 }
 
 .ai-badge {
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    background: var(--primary-accent);
     color: white;
     padding: 0.25rem 0.625rem;
     border-radius: var(--radius-full);
@@ -161,7 +165,7 @@ body {
 
 .phase-item.active .phase-dot {
     background: var(--primary-color);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 4px rgba(248, 106, 14, 0.2);
 }
 
 .phase-item.completed .phase-dot {
@@ -222,8 +226,8 @@ body {
 .ai-info-card {
     display: flex;
     gap: 1rem;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: linear-gradient(135deg, rgba(248, 106, 14, 0.08), rgba(46, 92, 213, 0.08));
+    border: 1px solid rgba(248, 106, 14, 0.2);
     padding: 1rem;
     border-radius: var(--radius-lg);
     text-align: left;
@@ -232,7 +236,7 @@ body {
 }
 
 .ai-info-icon {
-    color: #7c3aed;
+    color: var(--primary-accent);
     flex-shrink: 0;
 }
 
@@ -240,7 +244,7 @@ body {
     font-size: 0.9375rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
-    color: #5b21b6;
+    color: var(--primary-navy);
 }
 
 .ai-info-content p {
@@ -280,13 +284,13 @@ body {
 }
 
 .human-option-content a {
-    color: #16a34a;
+    color: var(--accent-teal);
     text-decoration: underline;
     font-weight: 500;
 }
 
 .human-option-content a:hover {
-    color: #15803d;
+    color: var(--primary-navy);
 }
 
 .welcome-list {
@@ -363,7 +367,7 @@ body {
 }
 
 .bot .message-avatar {
-    background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+    background: var(--primary-accent);
     color: white;
 }
 
@@ -516,7 +520,7 @@ body {
 #responseInput:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(248, 106, 14, 0.15);
 }
 
 #responseInput::placeholder {
@@ -783,7 +787,7 @@ body {
 }
 
 .data-table tr:hover td {
-    background: rgba(37, 99, 235, 0.02);
+    background: rgba(248, 106, 14, 0.04);
 }
 
 .candidate-name {
@@ -838,7 +842,7 @@ body {
 }
 
 .btn-followup:hover {
-    background: rgba(37, 99, 235, 0.1);
+    background: rgba(248, 106, 14, 0.1);
 }
 
 /* Empty State */
@@ -918,7 +922,7 @@ body {
 .form-group input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(248, 106, 14, 0.15);
 }
 
 .error-message {
@@ -939,7 +943,7 @@ body {
 }
 
 .back-link:hover {
-    color: var(--primary-color);
+    color: var(--primary-accent);
 }
 
 /* Evaluation Page */
@@ -1212,7 +1216,7 @@ body {
 }
 
 .transcript-turn.assistant .turn-label {
-    color: var(--primary-color);
+    color: var(--primary-accent);
 }
 
 .turn-content {
@@ -1423,7 +1427,7 @@ body {
 
 .privacy-details summary {
     cursor: pointer;
-    color: var(--primary);
+    color: var(--primary-accent);
     font-size: 0.875rem;
     font-weight: 500;
 }
@@ -1461,8 +1465,8 @@ body {
     gap: 0.75rem;
     cursor: pointer;
     padding: 0.75rem;
-    background: rgba(99, 102, 241, 0.05);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    background: rgba(248, 106, 14, 0.06);
+    border: 1px solid rgba(248, 106, 14, 0.2);
     border-radius: var(--radius-md);
 }
 
@@ -1471,7 +1475,7 @@ body {
     height: 18px;
     margin-top: 2px;
     cursor: pointer;
-    accent-color: var(--primary);
+    accent-color: var(--primary-accent);
 }
 
 .consent-text {
@@ -1495,7 +1499,7 @@ body {
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), #8b5cf6);
+    background: var(--primary-accent);
     border-radius: 2px;
     transition: width 0.3s ease;
 }
@@ -1673,14 +1677,14 @@ body {
 }
 
 .feedback-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--primary-accent);
+    color: var(--primary-accent);
 }
 
 .feedback-btn.selected {
-    border-color: var(--primary);
-    background: rgba(99, 102, 241, 0.1);
-    color: var(--primary);
+    border-color: var(--primary-accent);
+    background: rgba(248, 106, 14, 0.1);
+    color: var(--primary-accent);
 }
 
 .feedback-btn[data-rating="positive"]:hover,
@@ -1720,7 +1724,7 @@ body {
 
 .feedback-comment textarea:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--primary-accent);
 }
 
 .btn-secondary {

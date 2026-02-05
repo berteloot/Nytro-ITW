@@ -300,6 +300,8 @@ class InterviewChatbot {
                     // Show next message
                     this.addBotMessage(data.message);
                     this.responseInput.focus();
+                    // Re-scroll after focus: focus can trigger scroll-to-input (e.g. mobile keyboard)
+                    setTimeout(() => this.scrollToBottom(), 150);
                 }
             } else {
                 this.addBotMessage(data.error || 'Something went wrong. Please try again.');
@@ -646,22 +648,27 @@ class InterviewChatbot {
 
     scrollToBottom() {
         const chatContainer = document.getElementById('chatContainer');
-        
-        // Scroll function
+        const messages = document.getElementById('chatMessages');
+
         const doScroll = () => {
-            if (chatContainer) {
+            const lastMessage = messages?.lastElementChild;
+            // Use block: 'start' so the TOP of the new message is visible.
+            // With block: 'end', long AI replies get their top cut off, forcing the user to scroll UP.
+            if (lastMessage) {
+                lastMessage.scrollIntoView({ block: 'start', behavior: 'instant' });
+            } else if (chatContainer) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         };
-        
-        // Scroll immediately
+
+        // Immediate scroll
         doScroll();
-        
-        // Scroll again after short delay (for DOM updates)
-        setTimeout(doScroll, 50);
-        
-        // Final scroll after longer delay (for images/content loading)
-        setTimeout(doScroll, 150);
+        // After layout (double rAF ensures paint has completed)
+        requestAnimationFrame(() => {
+            requestAnimationFrame(doScroll);
+        });
+        // Fallback: wins over any focus-induced scroll (e.g. mobile keyboard)
+        setTimeout(doScroll, 100);
     }
 
     escapeHtml(text) {

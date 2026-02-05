@@ -7,14 +7,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="admin-body">
     <div class="admin-login-container">
         <div class="admin-login-card">
-            <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
-                <span class="logo-icon">N</span>
-                <span class="logo-text">Nytro</span>
+            <div class="logo logo-center">
+                <img src="{{ url_for('static', filename='logo_Nytro_color.png') }}" alt="Nytro" class="logo-img">
             </div>
             
             <h1>Admin Login</h1>
