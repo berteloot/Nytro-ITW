@@ -24,8 +24,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Interview data (contains PII)
+# Interview data and persisted evaluations (contain PII)
 interviews/
+data/
 *.json
 !example_interview.json
 

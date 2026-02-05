@@ -83,6 +83,27 @@ In Render dashboard, go to your service > **Environment** and add:
 |----------|-------------|----------|
 | `SECRET_KEY` | Flask session secret (auto-generated if using Blueprint) | Yes |
 | `HUBSPOT_ACCESS_TOKEN` | Your HubSpot Private App access token | Yes |
+| `ADMIN_USERNAME` | Admin dashboard login username (default: `admin`) | No |
+| `ADMIN_PASSWORD` | Admin password (plaintext fallback; avoid in production) | No* |
+| `ADMIN_PASSWORD_HASH` | bcrypt hash of admin password (preferred in production) | No* |
+| `EVALUATIONS_DATA_DIR` | Directory for persisted evaluations JSON (default: `data`) | No |
+| `SESSION_COOKIE_SECURE` | Set to `true` over HTTPS | No |
+| `REDIS_URL` | Redis URL for rate-limit storage (multi-worker); omit for in-memory | No |
+| `MAX_RESPONSE_LENGTH` | Max characters per candidate response (default: 2000) | No |
+
+\* Set either `ADMIN_PASSWORD` (dev) or `ADMIN_PASSWORD_HASH` (production). To generate a hash:
+`python -c "import bcrypt; print(bcrypt.hashpw(b'your-password', bcrypt.gensalt()).decode())"`
+
+### Persisted evaluations
+
+Evaluations are stored under `EVALUATIONS_DATA_DIR`/`evaluations.json`. On Render, use a persistent disk or set `EVALUATIONS_DATA_DIR` to a path that is backed by persistent storage if you need evaluations to survive restarts.
+
+### Rate limiting and security
+
+- **Admin login**: 5 attempts per minute per IP.
+- **Interview start** (`/api/start`): 10 per hour per IP.
+- **Interview respond** (`/api/respond`): 120 per hour per IP, plus max response length (see `MAX_RESPONSE_LENGTH`).
+- Session cookies use HttpOnly, SameSite=Lax; set `SESSION_COOKIE_SECURE=true` in production.
 
 ## Step 5: Test Your Deployment
 

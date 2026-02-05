@@ -15,9 +15,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import bcrypt
 
 from ai_interview_engine import (
-    AIInterviewEngine, 
+    AIInterviewEngine,
     FollowUpInterviewEngine,
     CandidateEvaluation,
     evaluation_to_dict
@@ -26,9 +29,26 @@ from ai_interview_engine import (
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
+# Secure session cookies
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+if os.environ.get('FLASK_ENV') == 'production' or os.environ.get('SESSION_COOKIE_SECURE', '').lower() == 'true':
+    app.config['SESSION_COOKIE_SECURE'] = True
+
 # Configuration
 HUBSPOT_ACCESS_TOKEN = os.environ.get('HUBSPOT_ACCESS_TOKEN')
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nytro-admin-2024')  # Change in production!
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'nytro-admin-2024')  # Fallback if no hash set
+ADMIN_PASSWORD_HASH = os.environ.get('ADMIN_PASSWORD_HASH')  # bcrypt hash; preferred in production
+REQUEST_TIMEOUT = (3.05, 10)  # (connect, read) seconds for external HTTP
+
+# Rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per hour"],
+    storage_uri=os.environ.get("REDIS_URL", "memory://"),  # Use Redis in production for multi-worker
+)
 
 # Initialize AI engines
 try:
@@ -42,8 +62,55 @@ except Exception as e:
     ai_engine = None
     followup_engine = None
 
-# In-memory storage for evaluations (use database in production)
-completed_evaluations = {}
+# Evaluations: persist to disk as JSON (PII - keep data/ in .gitignore)
+EVALUATIONS_DATA_DIR = os.environ.get('EVALUATIONS_DATA_DIR', 'data')
+EVALUATIONS_FILE = os.path.join(EVALUATIONS_DATA_DIR, 'evaluations.json')
+
+
+def _redact_pii(text: str, max_visible: int = 4) -> str:
+    """Redact email/name-like strings for logs; leave session IDs and short tokens."""
+    if not text or len(text) < max_visible:
+        return "(redacted)"
+    return text[:2] + "***" + text[-1] if len(text) > max_visible else "***"
+
+
+def load_evaluations() -> dict:
+    """Load evaluations from disk."""
+    if not os.path.isfile(EVALUATIONS_FILE):
+        return {}
+    try:
+        with open(EVALUATIONS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"[WARN] Could not load evaluations from disk: {e}")
+        return {}
+
+
+def save_evaluations(evaluations: dict) -> None:
+    """Persist evaluations to disk."""
+    try:
+        os.makedirs(EVALUATIONS_DATA_DIR, exist_ok=True)
+        with open(EVALUATIONS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(evaluations, f, indent=2, ensure_ascii=False)
+    except OSError as e:
+        print(f"[ERROR] Could not save evaluations to disk: {e}")
+
+
+def _admin_password_ok(username: str, password: str) -> bool:
+    """Verify admin username and password (hash preferred)."""
+    if username != ADMIN_USERNAME:
+        return False
+    if not password:
+        return False
+    if ADMIN_PASSWORD_HASH:
+        try:
+            return bcrypt.checkpw(password.encode('utf-8'), ADMIN_PASSWORD_HASH.encode('utf-8'))
+        except Exception:
+            return False
+    return password == ADMIN_PASSWORD
+
+
+completed_evaluations = load_evaluations()
 followup_sessions = {}
 
 
@@ -76,14 +143,14 @@ def search_contact_by_email(email: str) -> dict:
     }
     
     try:
-        response = requests.post(url, json=payload, headers=get_hubspot_headers())
+        response = requests.post(url, json=payload, headers=get_hubspot_headers(), timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         if data.get("total", 0) > 0:
             return data["results"][0]
         return None
     except requests.exceptions.RequestException as e:
-        print(f"Error searching contact: {e}")
+        print(f"[HubSpot] Search error: {e}")
         return None
 
 
@@ -106,11 +173,11 @@ def create_contact(name: str, email: str, city: str = None) -> dict:
         properties["city"] = city
     
     try:
-        response = requests.post(url, json={"properties": properties}, headers=get_hubspot_headers())
+        response = requests.post(url, json={"properties": properties}, headers=get_hubspot_headers(), timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Error creating contact: {e}")
+        print(f"[HubSpot] Create contact error: {e}")
         return None
 
 
@@ -137,13 +204,12 @@ def create_note(contact_id: str, note_body: str) -> dict:
     }
     
     try:
-        response = requests.post(url, json=payload, headers=get_hubspot_headers())
+        response = requests.post(url, json=payload, headers=get_hubspot_headers(), timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         result = response.json()
-        # Return in a format compatible with our existing code
         return {"id": result.get("engagement", {}).get("id")}
     except requests.exceptions.RequestException as e:
-        print(f"[HubSpot] Error creating note: {e}")
+        print(f"[HubSpot] Create note error: {e}")
         if hasattr(e, 'response') and e.response is not None:
             print(f"[HubSpot] Response: {e.response.text}")
         return None
@@ -228,7 +294,7 @@ def format_evaluation_note(evaluation: CandidateEvaluation, transcript: list) ->
 
 def send_evaluation_to_hubspot(evaluation: CandidateEvaluation, transcript: list) -> dict:
     """Send evaluation to HubSpot"""
-    print(f"[HubSpot] Attempting to send evaluation for {evaluation.candidate_name} ({evaluation.candidate_email})")
+    print(f"[HubSpot] Sending evaluation (candidate {_redact_pii(evaluation.candidate_email)})")
     
     if not HUBSPOT_ACCESS_TOKEN:
         print("[HubSpot] ERROR: No access token configured")
@@ -358,6 +424,7 @@ def index():
 
 
 @app.route('/api/start', methods=['POST'])
+@limiter.limit("10 per hour")
 def start_interview():
     """Start a new interview session"""
     if not AI_ENABLED:
@@ -380,17 +447,26 @@ def start_interview():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+MAX_RESPONSE_LENGTH = int(os.environ.get('MAX_RESPONSE_LENGTH', 2000))
+
+
 @app.route('/api/respond', methods=['POST'])
+@limiter.limit("120 per hour")  # ~2/min for long interviews
 def process_response():
     """Process a candidate's response"""
     if not AI_ENABLED:
         return jsonify({"success": False, "error": "AI features not available"}), 503
     
     data = request.get_json()
-    response_text = data.get('response', '').strip()
+    response_text = (data.get('response') or '').strip()
     
     if not response_text:
         return jsonify({"success": False, "error": "Please provide an answer"})
+    if len(response_text) > MAX_RESPONSE_LENGTH:
+        return jsonify({
+            "success": False,
+            "error": f"Response too long (max {MAX_RESPONSE_LENGTH} characters). Please shorten your answer."
+        }), 400
     
     session_id = session.get('interview_session_id')
     if not session_id:
@@ -424,19 +500,20 @@ def process_response():
         # If interview is complete, generate evaluation
         if interview_session.phase == "complete":
             try:
-                print(f"[INFO] Starting evaluation for session {session_id}")
+                print(f"[INFO] Starting evaluation for session {session_id[:8]}...")
                 evaluation = ai_engine.evaluate_candidate(session_id)
                 print(f"[INFO] Evaluation complete: {evaluation.recommendation_label}")
                 
                 session_data = ai_engine.export_session(session_id)
                 
-                # Store evaluation
+                # Store evaluation and persist to disk
                 completed_evaluations[session_id] = {
                     "evaluation": evaluation_to_dict(evaluation),
                     "session_data": session_data,
                     "timestamp": datetime.now().isoformat()
                 }
-                print(f"[INFO] Evaluation stored for session {session_id}")
+                save_evaluations(completed_evaluations)
+                print(f"[INFO] Evaluation stored for session {session_id[:8]}...")
                 
                 # Send to HubSpot
                 try:
@@ -449,6 +526,7 @@ def process_response():
                     # Store HubSpot contact_id for later feedback
                     if hubspot_result.get("success") and hubspot_result.get("contact_id"):
                         completed_evaluations[session_id]["hubspot_contact_id"] = hubspot_result["contact_id"]
+                        save_evaluations(completed_evaluations)
                 except Exception as hub_error:
                     print(f"[ERROR] HubSpot failed: {hub_error}")
                     response_data["hubspot"] = {"success": False, "error": str(hub_error)}
@@ -509,8 +587,12 @@ def track_analytics():
         data = request.get_json(force=True, silent=True) or {}
         event = data.get('event', 'unknown')
         
-        # Log analytics event
-        print(f"[Analytics] {event}: {json.dumps(data)}")
+        # Log analytics event (do not log PII: redact name/email if present)
+        safe_data = dict(data)
+        for key in ('candidate_name', 'candidate_email', 'email', 'name'):
+            if key in safe_data and safe_data[key]:
+                safe_data[key] = _redact_pii(str(safe_data[key]))
+        print(f"[Analytics] {event}: {json.dumps(safe_data)}")
         
         # In production, you would send this to an analytics service
         # For now, we just log it
@@ -539,6 +621,7 @@ def submit_feedback():
                 'comment': comment,
                 'timestamp': datetime.now().isoformat()
             }
+            save_evaluations(completed_evaluations)
             
             # Send feedback to HubSpot as a follow-up note
             contact_id = completed_evaluations[session_id].get('hubspot_contact_id')
@@ -598,16 +681,30 @@ def health_check():
 # ADMIN ROUTES - DASHBOARD
 # =============================================================================
 
+def _admin_csrf_ok() -> bool:
+    """Validate CSRF token for admin POST (form or header)."""
+    token = request.form.get('csrf_token') or request.headers.get('X-CSRF-Token')
+    return token and token == session.get('admin_csrf_token')
+
+
 @app.route('/admin/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def admin_login():
-    """Admin login page"""
+    """Admin login page (username + password; rate limited)."""
+    if request.method == 'GET':
+        session['admin_csrf_token'] = os.urandom(16).hex()
+        return render_template('admin_login.html', csrf_token=session.get('admin_csrf_token', ''))
     if request.method == 'POST':
-        password = request.form.get('password')
-        if password == ADMIN_PASSWORD:
+        if not _admin_csrf_ok():
+            return render_template('admin_login.html', error="Invalid request. Please try again.", csrf_token=session.get('admin_csrf_token') or os.urandom(16).hex())
+        username = (request.form.get('username') or '').strip()
+        password = request.form.get('password') or ''
+        if _admin_password_ok(username, password):
             session['admin_authenticated'] = True
+            session.pop('admin_csrf_token', None)
             return redirect(url_for('admin_dashboard'))
-        return render_template('admin_login.html', error="Invalid password")
-    return render_template('admin_login.html')
+        return render_template('admin_login.html', error="Invalid username or password", csrf_token=session.get('admin_csrf_token') or os.urandom(16).hex())
+    return render_template('admin_login.html', csrf_token=session.get('admin_csrf_token', ''))
 
 
 @app.route('/admin/logout')
