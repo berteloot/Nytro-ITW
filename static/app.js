@@ -47,6 +47,7 @@ class InterviewChatbot {
         this.maxQuestions = 12; // Approximate
         this.startTime = null;
         this.selectedFeedback = null;
+        this.candidateEmail = null; // Track candidate email for confirmation
         
         // Timers
         this.inactivityTimer = null;
@@ -243,6 +244,14 @@ class InterviewChatbot {
 
         // Add user message
         this.addUserMessage(response);
+        
+        // Capture email if it looks like one (for confirmation display)
+        if (response.includes('@') && response.includes('.')) {
+            const emailMatch = response.match(/[\w.-]+@[\w.-]+\.\w+/);
+            if (emailMatch) {
+                this.candidateEmail = emailMatch[0];
+            }
+        }
 
         // Clear input
         this.responseInput.value = '';
@@ -604,6 +613,18 @@ class InterviewChatbot {
         }
         
         this.completionMessage.textContent = message;
+        
+        // Show email confirmation
+        const emailConfirmation = document.getElementById('emailConfirmation');
+        const confirmationEmail = document.getElementById('confirmationEmail');
+        
+        if (this.candidateEmail && emailConfirmation && confirmationEmail) {
+            confirmationEmail.textContent = this.candidateEmail;
+            emailConfirmation.style.display = 'flex';
+        } else if (emailConfirmation) {
+            // Hide if no email captured
+            emailConfirmation.style.display = 'none';
+        }
     }
 
     showError(message) {

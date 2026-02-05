@@ -1592,6 +1592,48 @@ body {
    FEEDBACK SECTION
 ============================================================================= */
 
+/* =============================================================================
+   EMAIL CONFIRMATION
+============================================================================= */
+
+.email-confirmation {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    margin: 1.5rem 0;
+    max-width: 400px;
+}
+
+.email-confirmation-icon {
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.email-confirmation-content p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.email-confirmation-content p:first-child {
+    color: #15803d;
+    margin-bottom: 0.25rem;
+}
+
+.email-address {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    word-break: break-all;
+}
+
+/* =============================================================================
+   FEEDBACK SECTION
+============================================================================= */
+
 .feedback-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
