@@ -249,6 +249,65 @@ def send_evaluation_to_hubspot(evaluation: CandidateEvaluation, transcript: list
 
 
 # =============================================================================
+# EMAIL CONFIRMATION (Placeholder - integrate with email service in production)
+# =============================================================================
+
+def send_confirmation_email(candidate_name: str, candidate_email: str) -> dict:
+    """Send confirmation email to candidate after interview completion.
+    
+    In production, integrate with an email service like:
+    - SendGrid
+    - AWS SES
+    - Mailgun
+    - HubSpot transactional emails
+    
+    For now, this is a placeholder that logs the email.
+    """
+    if not candidate_email:
+        return {"success": False, "error": "No email provided"}
+    
+    # Email content
+    subject = "Thanks for completing your Nytro interview!"
+    body = f"""
+Hi {candidate_name or 'there'},
+
+Thank you for taking the time to complete your interview for the Junior Marketer position at Nytro.
+
+What happens next:
+- Our team will review your interview responses
+- A human reviewer will evaluate the AI assessment
+- You'll hear back from us within 5-7 business days
+
+If you have any questions in the meantime, feel free to reach out at:
+https://www.nytromarketing.com/contact
+
+Best regards,
+The Nytro Team
+    """
+    
+    # Log the email (in production, send via email service)
+    print(f"[Email] Would send confirmation to {candidate_email}")
+    print(f"[Email] Subject: {subject}")
+    
+    # TODO: Implement actual email sending
+    # Example with SendGrid:
+    # sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+    # message = Mail(
+    #     from_email='noreply@nytromarketing.com',
+    #     to_emails=candidate_email,
+    #     subject=subject,
+    #     plain_text_content=body
+    # )
+    # sg.send(message)
+    
+    return {
+        "success": True,
+        "message": "Confirmation email logged (implement email service for production)",
+        "email": candidate_email
+    }
+
+
+# =============================================================================
 # ADMIN AUTHENTICATION
 # =============================================================================
 
@@ -350,6 +409,17 @@ def process_response():
                     print(f"[ERROR] HubSpot failed: {hub_error}")
                     response_data["hubspot"] = {"success": False, "error": str(hub_error)}
                 
+                # Send confirmation email to candidate
+                try:
+                    email_result = send_confirmation_email(
+                        evaluation.candidate_name,
+                        evaluation.candidate_email
+                    )
+                    response_data["email"] = email_result
+                except Exception as email_error:
+                    print(f"[ERROR] Email failed: {email_error}")
+                    response_data["email"] = {"success": False, "error": str(email_error)}
+                
                 response_data["evaluation_summary"] = {
                     "recommendation": evaluation.recommendation_label,
                     "score": evaluation.weighted_average,
@@ -385,6 +455,50 @@ def get_progress():
         "turn_count": interview_session.turn_count,
         "skills_covered": len(interview_session.skills_discussed)
     })
+
+
+@app.route('/api/analytics', methods=['POST'])
+def track_analytics():
+    """Track frontend analytics events (drop-offs, timing, etc.)"""
+    try:
+        data = request.get_json() or {}
+        event = data.get('event', 'unknown')
+        
+        # Log analytics event
+        print(f"[Analytics] {event}: {json.dumps(data)}")
+        
+        # In production, you would send this to an analytics service
+        # For now, we just log it
+        
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Analytics error: {e}")
+        return jsonify({"success": False}), 500
+
+
+@app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    """Collect post-interview feedback from candidates"""
+    try:
+        data = request.get_json() or {}
+        session_id = data.get('session_id')
+        rating = data.get('rating')  # positive, neutral, negative
+        comment = data.get('comment', '')
+        
+        print(f"[Feedback] Session {session_id}: {rating} - {comment[:100] if comment else 'No comment'}")
+        
+        # Store feedback with the evaluation if exists
+        if session_id and session_id in completed_evaluations:
+            completed_evaluations[session_id]['feedback'] = {
+                'rating': rating,
+                'comment': comment,
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        return jsonify({"success": True, "message": "Feedback received"})
+    except Exception as e:
+        print(f"Feedback error: {e}")
+        return jsonify({"success": False}), 500
 
 
 @app.route('/health')

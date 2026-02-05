@@ -50,6 +50,45 @@
                     <span class="phase-label">Wrap Up</span>
                 </div>
             </div>
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span id="progressText">Starting...</span>
+                <span id="timeRemaining"></span>
+            </div>
+        </div>
+
+        <!-- Session Controls -->
+        <div class="session-controls" id="sessionControls" style="display: none;">
+            <button class="btn-icon" id="pauseBtn" title="Pause interview">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <span>Pause</span>
+            </button>
+        </div>
+
+        <!-- Pause Modal -->
+        <div class="modal-overlay" id="pauseModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Interview Paused</h3>
+                <p>Your progress has been saved. You can resume at any time.</p>
+                <p class="timeout-warning" id="timeoutWarning">Session will expire in <span id="timeoutCountdown">30:00</span></p>
+                <button class="btn-primary" id="resumeBtn">Resume Interview</button>
+            </div>
+        </div>
+
+        <!-- Timeout Warning Modal -->
+        <div class="modal-overlay" id="timeoutModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Are you still there?</h3>
+                <p>Your session will expire due to inactivity.</p>
+                <p class="timeout-warning">Time remaining: <span id="inactivityCountdown">2:00</span></p>
+                <button class="btn-primary" id="continueBtn">Yes, continue</button>
+            </div>
         </div>
 
         <!-- Chat Container -->
@@ -97,7 +136,34 @@
                     <li>Share specific examples when you can</li>
                     <li>Feel free to ask questions at the end</li>
                 </ul>
-                <button class="btn-primary" id="startBtn">Start Interview</button>
+
+                <!-- Privacy & Consent -->
+                <div class="privacy-section">
+                    <div class="privacy-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span>Your data is handled securely</span>
+                    </div>
+                    <details class="privacy-details">
+                        <summary>How we handle your data</summary>
+                        <div class="privacy-content">
+                            <p><strong>What we collect:</strong> Your name, email, and interview responses.</p>
+                            <p><strong>How we use it:</strong> To evaluate your candidacy and contact you about next steps.</p>
+                            <p><strong>AI processing:</strong> Your responses are processed by OpenAI to generate questions and evaluate your fit. A human reviewer always makes the final decision.</p>
+                            <p><strong>Data retention:</strong> Interview data is retained for 12 months, then deleted.</p>
+                            <p><strong>Your rights:</strong> You can request access to or deletion of your data by contacting us.</p>
+                        </div>
+                    </details>
+                    <label class="consent-checkbox">
+                        <input type="checkbox" id="consentCheckbox" required>
+                        <span class="checkmark"></span>
+                        <span class="consent-text">I understand this interview uses AI and consent to the processing of my data as described above.</span>
+                    </label>
+                </div>
+
+                <button class="btn-primary" id="startBtn" disabled>Start Interview</button>
             </div>
 
             <!-- Chat Messages -->
@@ -121,6 +187,48 @@
                         <li>Expect to hear back within 5-7 business days</li>
                         <li>Check your email for updates</li>
                     </ul>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="feedback-section" id="feedbackSection">
+                    <h3>Quick Feedback</h3>
+                    <p>How was your experience with this AI interview?</p>
+                    <div class="feedback-buttons">
+                        <button class="feedback-btn" data-rating="positive" title="Good experience">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                            <span>Good</span>
+                        </button>
+                        <button class="feedback-btn" data-rating="neutral" title="Okay experience">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="8" y1="15" x2="16" y2="15"></line>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                            <span>Okay</span>
+                        </button>
+                        <button class="feedback-btn" data-rating="negative" title="Could be better">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                            <span>Could be better</span>
+                        </button>
+                    </div>
+                    <div class="feedback-comment" id="feedbackComment" style="display: none;">
+                        <textarea id="feedbackText" placeholder="Any additional comments? (optional)" rows="2"></textarea>
+                        <button class="btn-secondary" id="submitFeedback">Submit Feedback</button>
+                    </div>
+                    <div class="feedback-thanks" id="feedbackThanks" style="display: none;">
+                        <p>Thanks for your feedback!</p>
+                    </div>
                 </div>
             </div>
         </div>

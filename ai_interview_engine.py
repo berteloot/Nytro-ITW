@@ -541,8 +541,11 @@ CURRENT PHASE: Closing
         }
         
         try:
+            # Use model from config
+            model = config.get('ai_config', {}).get('model', 'gpt-4o')
+            
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model=model,
                 messages=[
                     {"role": "system", "content": eval_prompt}
                 ],
