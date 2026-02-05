@@ -397,6 +397,20 @@ def process_response():
         return jsonify({"success": False, "error": "No active session"})
     
     try:
+        # Validate email/LinkedIn at the API boundary so invalid input never reaches the engine.
+        # If the next required field is email or LinkedIn and the message fails format check,
+        # return the error immediately without calling process_response.
+        validation = ai_engine.validate_collect_info_response(session_id, response_text)
+        if validation is not None:
+            error_message, interview_session = validation
+            return jsonify({
+                "success": True,
+                "message": error_message,
+                "phase": interview_session.phase,
+                "turn_count": interview_session.turn_count,
+                "complete": False
+            })
+
         ai_response, interview_session = ai_engine.process_response(session_id, response_text)
         
         response_data = {

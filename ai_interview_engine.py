@@ -434,6 +434,41 @@ CURRENT PHASE: Closing - Candidate just responded
         
         return opening, session
     
+    def validate_collect_info_response(
+        self, session_id: str, message: str
+    ) -> Optional[Tuple[str, InterviewSession]]:
+        """
+        API-layer gate: if we're in collect_info and the message is an invalid
+        attempt for the next required field (email or LinkedIn), return (error_message, session)
+        so the handler can respond without calling process_response. Otherwise return None.
+        Ensures validation runs at the request boundary regardless of engine internals.
+        """
+        session = self.sessions.get(session_id)
+        if not session or session.phase != "collect_info":
+            return None
+        config = self.config
+        required_fields = [f["field"] for f in config.get("required_info", [])]
+        base_order = config.get("conversation_flow", {}).get("collect_info", {}).get("order")
+        if base_order:
+            collect_order = list(base_order)
+            for f in required_fields:
+                if f not in collect_order:
+                    collect_order.append(f)
+        else:
+            collect_order = required_fields
+        needed = [f for f in collect_order if f not in session.collected_info]
+        if not needed:
+            return None
+        msg = message.strip()
+        next_field = needed[0]
+        if next_field == "email" and "@" in msg:
+            if self._extract_email(msg) is None:
+                return (self._get_validation_error_message("email"), session)
+        elif next_field == "linkedin_url" and "linkedin.com" in msg.lower():
+            if self._extract_linkedin_url(msg) is None:
+                return (self._get_validation_error_message("linkedin_url"), session)
+        return None
+
     def process_response(self, session_id: str, user_message: str) -> Tuple[str, InterviewSession]:
         """Process a candidate's response and generate the next message"""
         session = self.sessions.get(session_id)
