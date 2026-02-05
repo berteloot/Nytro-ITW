@@ -645,25 +645,23 @@ class InterviewChatbot {
     }
 
     scrollToBottom() {
-        // Use setTimeout to ensure DOM is fully updated before scrolling
-        setTimeout(() => {
-            // Scroll the chat messages container
-            if (this.chatMessages) {
-                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-            }
-            
-            // Also scroll the parent chat container
-            const chatContainer = document.getElementById('chatContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        
+        // Scroll function
+        const doScroll = () => {
             if (chatContainer) {
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
-            
-            // Also scroll the last message into view as final backup
-            const lastMessage = this.chatMessages?.lastElementChild;
-            if (lastMessage) {
-                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
-        }, 50);
+        };
+        
+        // Scroll immediately
+        doScroll();
+        
+        // Scroll again after short delay (for DOM updates)
+        setTimeout(doScroll, 50);
+        
+        // Final scroll after longer delay (for images/content loading)
+        setTimeout(doScroll, 150);
     }
 
     escapeHtml(text) {
