@@ -491,7 +491,8 @@ def get_progress():
 def track_analytics():
     """Track frontend analytics events (drop-offs, timing, etc.)"""
     try:
-        data = request.get_json() or {}
+        # sendBeacon does not set Content-Type: application/json, so parse regardless
+        data = request.get_json(force=True, silent=True) or {}
         event = data.get('event', 'unknown')
         
         # Log analytics event

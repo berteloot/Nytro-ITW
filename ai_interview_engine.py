@@ -88,6 +88,8 @@ class InterviewSession:
     
     phase: str = "introduction"  # introduction, collect_info, skills_assessment, closing, complete
     turn_count: int = 0
+    closure_asked_questions: bool = False  # True after AI asked "any questions?"
+    last_validation_error: str = ""  # "email" or "linkedin_url" when last response was invalid
     
     started_at: str = ""
     completed_at: Optional[str] = None
@@ -121,6 +123,36 @@ class AIInterviewEngine:
         """Load interview configuration from YAML file"""
         with open(config_path, 'r') as f:
             return yaml.safe_load(f)
+    
+    def _extract_email(self, text: str) -> Optional[str]:
+        """Extract and validate email from text. Returns email or None if invalid."""
+        # Match common email patterns, e.g. name@domain.com
+        match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', text)
+        if not match:
+            return None
+        email = match.group(0)
+        # Basic sanity: not too short, has @ and dot in domain
+        if len(email) < 6 or email.count('@') != 1 or '.' not in email.split('@')[-1]:
+            return None
+        return email
+    
+    def _extract_linkedin_url(self, text: str) -> Optional[str]:
+        """Extract and validate LinkedIn profile URL. Returns URL or None if invalid."""
+        text_lower = text.lower()
+        if 'linkedin.com' not in text_lower:
+            return None
+        # Match URLs like https://linkedin.com/in/username or linkedin.com/in/username
+        match = re.search(
+            r'(https?://)?(www\.)?linkedin\.com/in/[\w\-]+/?',
+            text,
+            re.IGNORECASE
+        )
+        if not match:
+            return None
+        url = match.group(0).rstrip('/')
+        if not url.startswith('http'):
+            url = 'https://' + url
+        return url
     
     def _get_system_prompt(self, session: InterviewSession) -> str:
         """Generate the system prompt based on config and current state"""
@@ -224,12 +256,18 @@ All required info collected. Transition smoothly with a brief intro like:
             if not field_config:
                 field_config = {'field': next_field, 'question': f'Please provide your {next_field}.'}
             
+            validation_hint = ""
+            if session.last_validation_error == "email":
+                validation_hint = '\nThe previous response did not look like a valid email address. Ask again and say we cannot continue the interview without a valid email (e.g. name@example.com).'
+            elif session.last_validation_error == "linkedin_url":
+                validation_hint = '\nThe previous response did not look like a LinkedIn profile URL. Ask again and say we cannot continue the interview without a valid LinkedIn profile link (e.g. https://linkedin.com/in/yourprofile).'
+            
             return f"""
 CURRENT PHASE: Collecting Required Information
 You MUST ask for each of these in order. Do not skip any.
 Still need to collect: {', '.join(needed)}
 Next to collect: {next_field}
-Question to ask (ask exactly this): "{field_config['question']}"
+Question to ask (ask exactly this): "{field_config['question']}"{validation_hint}
 """
 
         elif session.phase == "skills_assessment":
@@ -291,10 +329,16 @@ REMEMBER:
 """
 
         elif session.phase == "closing":
+            if not session.closure_asked_questions:
+                return f"""
+CURRENT PHASE: Closing - Ask for candidate questions
+Ask: "{config['conversation_flow']['closing'].get('candidate_questions_prompt', 'Do you have any questions for us?')}"
+"""
             return f"""
-CURRENT PHASE: Closing
-1. Ask if they have questions: "{config['conversation_flow']['closing'].get('candidate_questions_prompt', 'Do you have any questions for us?')}"
-2. After they ask (or decline), deliver the closing message:
+CURRENT PHASE: Closing - Candidate just responded
+1. If they ASKED questions: Acknowledge that you understood (e.g. "I've noted your questions - our team will be happy to discuss those in the next stages"). You do NOT need to answer, only confirm you understood.
+2. If they declined (no questions): Skip the acknowledgment.
+3. Then deliver the closing message:
 
 {config['conversation_flow']['closing']['final_message'].replace('{name}', session.candidate_name)}
 """
@@ -358,6 +402,14 @@ CURRENT PHASE: Closing
         ))
         session.turn_count += 1
         
+        # Track that we asked for candidate questions; after ack+closing, end interview
+        if session.phase == "closing":
+            if not session.closure_asked_questions:
+                session.closure_asked_questions = True
+            else:
+                session.phase = "complete"
+                session.completed_at = datetime.now().isoformat()
+        
         return ai_response, session
     
     def _update_session_state(self, session: InterviewSession, user_message: str):
@@ -376,10 +428,10 @@ CURRENT PHASE: Closing
             # Use explicit collect order so we always ask name → email → linkedin_url
             collect_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order', [f['field'] for f in config['required_info']])
             needed_fields = [f for f in collect_order if f not in collected]
+            session.last_validation_error = ""  # Clear on each new response
             
             if needed_fields:
                 # Content-based assignment: detect email/LinkedIn URL so we map correctly
-                # even if the AI asked questions in wrong order
                 msg = user_message.strip()
                 target_field = None
                 if "linkedin.com" in msg.lower() and "linkedin_url" in needed_fields:
@@ -390,6 +442,20 @@ CURRENT PHASE: Closing
                     target_field = "name"
                 if target_field is None:
                     target_field = needed_fields[0]
+                
+                # Validate email and LinkedIn before accepting
+                if target_field == "email":
+                    extracted = self._extract_email(msg)
+                    if not extracted:
+                        session.last_validation_error = "email"
+                        return
+                    msg = extracted
+                elif target_field == "linkedin_url":
+                    extracted = self._extract_linkedin_url(msg)
+                    if not extracted:
+                        session.last_validation_error = "linkedin_url"
+                        return
+                    msg = extracted
                 
                 session.collected_info[target_field] = msg
                 if target_field == "name":
@@ -436,11 +502,10 @@ CURRENT PHASE: Closing
                     session.phase = "closing"
             return
         
-        # Handle closing phase
+        # Handle closing phase: do NOT transition here - let AI acknowledge
+        # the candidate's questions first, then we complete after AI responds
         if session.phase == "closing":
-            # Candidate asked their questions, now complete
-            session.phase = "complete"
-            session.completed_at = datetime.now().isoformat()
+            return
     
     def _should_end_interview(self, session: InterviewSession) -> bool:
         """Check if the interview should end"""
