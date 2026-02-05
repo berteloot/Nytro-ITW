@@ -746,7 +746,8 @@ def start_followup():
         overall_summary=eval_data['evaluation']['overall_summary'],
         recommended_for_followup=eval_data['evaluation']['recommended_for_followup'],
         followup_focus_areas=eval_data['evaluation']['followup_focus_areas'],
-        followup_questions=eval_data['evaluation']['followup_questions']
+        followup_questions=eval_data['evaluation']['followup_questions'],
+        candidate_linkedin=eval_data['evaluation'].get('candidate_linkedin', '') or ''
     )
     
     try:

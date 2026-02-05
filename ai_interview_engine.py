@@ -33,7 +33,6 @@ class CandidateEvaluation:
     """Complete evaluation of a candidate"""
     candidate_name: str
     candidate_email: str
-    candidate_linkedin: str = ""
     interview_date: str
     role: str
     
@@ -55,6 +54,9 @@ class CandidateEvaluation:
     recommended_for_followup: bool
     followup_focus_areas: List[str]
     followup_questions: List[str]
+    
+    # Optional (collected during interview)
+    candidate_linkedin: str = ""
 
 
 @dataclass
