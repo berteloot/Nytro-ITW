@@ -127,6 +127,9 @@ class AIInterviewEngine:
     def _extract_email(self, text: str) -> Optional[str]:
         """Extract and validate email from text. Returns email or None if invalid."""
         text = text.strip()
+        # Reject strings with spaces (e.g. "berteloo @ com") - invalid format
+        if ' ' in text:
+            return None
         # Reject obviously incomplete: ends with @ or has no domain
         if text.endswith('@') or '@' not in text:
             return None
@@ -251,8 +254,16 @@ After they confirm, move to collecting their name."""
 
         elif session.phase == "collect_info":
             collected = list(session.collected_info.keys())
-            # Use explicit order from config so we always ask name → email → linkedin_url
-            collect_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order', [f['field'] for f in config['required_info']])
+            # Use same collect_order logic as _update_session_state (ensure linkedin never skipped)
+            base_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order')
+            required_fields = [f['field'] for f in config.get('required_info', [])]
+            if base_order:
+                collect_order = list(base_order)
+                for f in required_fields:
+                    if f not in collect_order:
+                        collect_order.append(f)
+            else:
+                collect_order = required_fields
             needed = [f for f in collect_order if f not in collected]
             
             if not needed:
@@ -346,7 +357,7 @@ Ask: "{config['conversation_flow']['closing'].get('candidate_questions_prompt', 
 """
             return f"""
 CURRENT PHASE: Closing - Candidate just responded
-1. If they ASKED questions: Acknowledge that you understood (e.g. "I've noted your questions - our team will be happy to discuss those in the next stages"). You do NOT need to answer, only confirm you understood.
+1. If they ASKED questions: Acknowledge them by referencing what they asked (e.g. "I've noted your questions about [topic X] and [topic Y] - our team will be happy to discuss those in the next stages"). Show you took their questions into consideration. You do NOT need to answer the questions, only acknowledge that you understood and noted them.
 2. If they declined (no questions): Skip the acknowledgment.
 3. Then deliver the closing message:
 
@@ -435,8 +446,16 @@ CURRENT PHASE: Closing - Candidate just responded
         # Handle info collection
         if session.phase == "collect_info":
             collected = list(session.collected_info.keys())
-            # Use explicit collect order so we always ask name → email → linkedin_url
-            collect_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order', [f['field'] for f in config['required_info']])
+            # Use explicit collect order - ensure linkedin_url is never skipped
+            base_order = config.get('conversation_flow', {}).get('collect_info', {}).get('order')
+            required_fields = [f['field'] for f in config.get('required_info', [])]
+            if base_order:
+                collect_order = list(base_order)
+                for f in required_fields:
+                    if f not in collect_order:
+                        collect_order.append(f)
+            else:
+                collect_order = required_fields
             needed_fields = [f for f in collect_order if f not in collected]
             session.last_validation_error = ""  # Clear on each new response
             
@@ -479,7 +498,7 @@ CURRENT PHASE: Closing - Candidate just responded
                 elif target_field == "availability":
                     session.candidate_availability = msg
             
-            # Check if all info collected (same order as collect_order)
+            # Check if all info collected (never skip linkedin_url if it's required)
             still_needed = [f for f in collect_order if f not in session.collected_info]
             if not still_needed:
                 session.phase = "skills_assessment"
